@@ -66,6 +66,7 @@ textarea:focus-visible,.btn:focus-visible,input:focus-visible{outline:2px solid 
   <header><div class="brand">Gilco Construction<small>Trade Partner</small></div><div class="who" id="who"></div></header>
   <main id="app" class="wrap" style="padding:0"><p class="loading">Loading your job…</p></main>
 </div>
+<script src="photos.js"></script>
 <script>
 const SB="https://tgbgianugkdtvvoodiuf.supabase.co/rest/v1/rpc/", KEY="sb_publishable_hAVUN6R20jFjy8lvFAEBnA_Nu9okkcj";
 const TOKEN=new URLSearchParams(location.search).get("t")||"";
@@ -167,6 +168,12 @@ function renderJob(v){
     ${photoBlock(v.photos||{})}
     ${d.notes?`<div class="label">Site notes</div><p style="margin:0">${esc(d.notes)}</p>`:""}
   </section>
+  ${v.spot?`<section class="panel">
+    <h2>Materials drop spot</h2>
+    <p class="note">The homeowner marked where the materials should be left.${v.spot.note?` Their note: <b style="color:var(--ink)">${esc(v.spot.note)}</b>`:""}</p>
+    <div id="spotMap" style="height:260px;border-radius:10px;border:1px solid var(--line);overflow:hidden"></div>
+    <a class="btn ghost" href="https://www.google.com/maps/search/?api=1&query=${v.spot.lat},${v.spot.lng}" target="_blank" rel="noopener">Open the spot in Google Maps</a>
+  </section>`:""}
   <section class="panel">
     <h2>Schedule</h2>
     <div class="sched">
@@ -208,6 +215,7 @@ function renderJob(v){
     ${ev.length?`<div class="label">Activity</div><ul class="log">${ev.map(e=>`<li class="${esc(e.kind)}"><b>${esc(evName[e.kind]||e.kind)}</b> <span>${esc(when(e.at))}</span>${e.note?`<br>${esc(e.note)}`:""}</li>`).join("")}</ul>`:""}
     <p class="note" id="msg" aria-live="polite"></p>
   </section>`);
+  if(v.spot&&window.GilcoPhotos){const el=$("spotMap");if(el)GilcoPhotos.showSpot(el,v.spot).catch(()=>{el.outerHTML='<p class="note">Map didn\'t load. Use the Google Maps button.</p>'})}
   document.querySelectorAll(".chk input").forEach(c=>c.onchange=()=>act("tp_check",{p_key:c.dataset.k,p_val:c.checked}));
   const so=$("siteOk");if(so)so.onclick=()=>act("tp_report",{p_kind:"site_check",p_note:`${got} of ${mats.length} items checked`},"Saving…");
   $("missBtn").onclick=()=>{$("missBox").hidden=false;$("missTxt").focus()};

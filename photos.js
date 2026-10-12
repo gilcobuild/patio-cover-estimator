@@ -19,6 +19,10 @@ const css=`.gp{display:grid;gap:12px}.gp-grid{display:grid;grid-template-columns
 .gp-slot em{font-style:normal;font-size:12px;font-weight:700;color:#8a5a2b}.gp-slot.has em{color:#2f7d4f}
 .gp-bar{font-size:14px;font-weight:600}.gp-bar.ok{color:#2f7d4f}
 .gp-link{display:flex;gap:8px;align-items:center;font-size:13px;color:#5d6872;flex-wrap:wrap}
+.gp-map{height:300px;border-radius:10px;border:1px solid #d3d8dd;overflow:hidden;z-index:0}
+.gp-pin div{width:34px;height:34px;border-radius:50% 50% 50% 0;background:#8a5a2b;border:3px solid #fff;transform:rotate(-45deg);box-shadow:0 2px 6px rgba(0,0,0,.45)}
+.gp input[type=text]{width:100%;font:500 16px inherit;padding:10px 12px;border:1px solid #d3d8dd;border-radius:7px;background:#f7f8f9;color:#1d2329}
+.gp-save{border:1px solid #8a5a2b;background:#8a5a2b;color:#fff;font:700 16px inherit;padding:13px;border-radius:9px;cursor:pointer}
 .gp-link button{border:1px solid #d3d8dd;background:#fff;border-radius:7px;padding:6px 10px;font:600 13px inherit;cursor:pointer;color:#1d2329}`;
 function addCss(){if(document.getElementById("gpcss"))return;const s=document.createElement("style");s.id="gpcss";s.textContent=css;document.head.appendChild(s)}
 async function rpc(fn,args){
@@ -73,7 +77,54 @@ function mount(box,token,photos,opts){
   }
   draw();
 }
-window.GilcoPhotos={rpc,mount,SLOTS};
+/* materials drop spot: satellite map of the home, homeowner drops a pin (only after the deposit is paid) */
+function loadLeaflet(){
+  if(window.L)return Promise.resolve();
+  return new Promise((ok,bad)=>{
+    const c=document.createElement("link");c.rel="stylesheet";c.href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css";document.head.appendChild(c);
+    const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";s.onload=ok;s.onerror=bad;document.head.appendChild(s);
+  });
+}
+async function geocode(addr){
+  try{const r=await fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=us&q="+encodeURIComponent(addr),{headers:{"Accept":"application/json"}});
+    const a=await r.json();if(a&&a[0])return [+a[0].lat,+a[0].lon]}catch(_){}
+  return null;
+}
+function satMap(el,center,zoom){
+  const m=L.map(el,{zoomControl:true,attributionControl:true,tap:true}).setView(center,zoom);
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    {maxNativeZoom:19,maxZoom:21,attribution:"Imagery © Esri"}).addTo(m);
+  return m;
+}
+const pinIcon=()=>L.divIcon({className:"gp-pin",html:'<div></div>',iconSize:[34,44],iconAnchor:[17,42]});
+async function mountSpot(box,token,addr,spot){
+  addCss();
+  box.innerHTML=`<div class="gp"><h2 style="margin:0">Where should we leave the materials?</h2>
+    <p class="hint" style="margin:0">Your materials are delivered a few days before the install. Tap the map (or drag the pin) to the spot you'd like them left — usually the driveway or a side yard.</p>
+    <div class="gp-map" id="gpMap"></div>
+    <label class="hint" style="display:grid;gap:4px">Anything the driver should know? <input type="text" id="gpNote" maxlength="300" placeholder="Gate code, keep off the grass, call first…" value="${esc(spot&&spot.note||"")}"></label>
+    <button type="button" class="gp-save" id="gpSave">Save this spot</button>
+    <p class="hint" id="gpSpotMsg" style="margin:0" aria-live="polite">${spot?"Spot saved. You can move it any time before delivery.":""}</p></div>`;
+  try{await loadLeaflet()}catch(_){box.querySelector("#gpSpotMsg").textContent="The map couldn't load. Check your signal and reload.";return}
+  let center=spot?[spot.lat,spot.lng]:await geocode(addr), found=!!center;
+  if(!center)center=[29.9236,-90.1985];
+  const m=satMap(box.querySelector("#gpMap"),center,found?20:13);
+  let pin=spot?L.marker([spot.lat,spot.lng],{draggable:true,icon:pinIcon()}).addTo(m):null;
+  if(!found)box.querySelector("#gpSpotMsg").textContent="We couldn't find your address on the map. Zoom in to your house, then tap the spot.";
+  const place=ll=>{if(pin)pin.setLatLng(ll);else pin=L.marker(ll,{draggable:true,icon:pinIcon()}).addTo(m);box.querySelector("#gpSpotMsg").textContent="Tap Save this spot when it's right."};
+  m.on("click",e=>place(e.latlng));
+  box.querySelector("#gpSave").onclick=async()=>{
+    const msg=box.querySelector("#gpSpotMsg");if(!pin){msg.textContent="Tap the map where the materials should go first.";return}
+    const ll=pin.getLatLng();msg.textContent="Saving…";
+    try{const r=await rpc("pc_spot_set",{p_token:token,p_lat:ll.lat,p_lng:ll.lng,p_note:box.querySelector("#gpNote").value.trim()});
+      msg.textContent=r.state==="ok"?"Spot saved ✓ You can move it any time before delivery.":"This step opens after your deposit is paid."}
+    catch(_){msg.textContent="Couldn't save. Check your signal and try again."}
+  };
+}
+function showSpot(el,spot){ /* read-only map for the installer */
+  return loadLeaflet().then(()=>{const m=satMap(el,[spot.lat,spot.lng],20);L.marker([spot.lat,spot.lng],{icon:pinIcon()}).addTo(m)});
+}
+window.GilcoPhotos={rpc,mount,mountSpot,showSpot,SLOTS};
 /* estimator hook: save the quote when "Get my quote" is pressed, then show the photo step */
 const book=document.getElementById("book"), step=document.getElementById("photoStep");
 if(book&&step){

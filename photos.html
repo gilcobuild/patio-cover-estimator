@@ -26,6 +26,7 @@ h1,h2{font-family:var(--display);text-transform:uppercase;letter-spacing:.03em;m
   <header><div class="brand">Gilco Construction<small>Aluminum Patio Covers</small></div></header>
   <section class="panel" id="top"><p class="hint">Loading…</p></section>
   <section class="panel" id="box" hidden></section>
+  <section class="panel" id="spot" hidden></section>
 </div>
 <script src="photos.js"></script>
 <script>
@@ -36,8 +37,9 @@ h1,h2{font-family:var(--display);text-transform:uppercase;letter-spacing:.03em;m
     const r=await GilcoPhotos.rpc("pc_quote_get",{p_token:t});
     if(r.state!=="ok"){top.innerHTML=`<h1>Link not found</h1><p class="hint">This photo link isn't valid. Call Gilco Construction for a new one.</p>`;return}
     top.innerHTML=`<h1>Photos for your patio cover${r.name?", "+r.name.replace(/[<>&"]/g,""):""}</h1>
-      <p class="hint">Quote ${r.quote_no}. We need 4 photos of the area where the cover goes, plus 1 of the front of your house so our installer finds the right home. Tap a box to take or choose a photo.</p>`;
+      <p class="hint">Quote ${r.quote_no}. We need 4 photos of the area where the cover goes, plus 1 of the front of your house so our installer finds the right home.${r.deposit?' Then show us where to leave the materials.':''} Tap a box to take or choose a photo.</p>`;
     box.hidden=false;GilcoPhotos.mount(box,t,r.photos||{},{title:false,showLink:false});
+    if(r.deposit){const sb=document.getElementById("spot");sb.hidden=false;GilcoPhotos.mountSpot(sb,t,r.addr||"",r.spot)}
   }catch(e){top.innerHTML=`<h1>Can't load right now</h1><p class="hint">Check your signal and reload this page.</p>`}
 })();
 </script>
