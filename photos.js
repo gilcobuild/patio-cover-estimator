@@ -131,6 +131,7 @@ const book=document.getElementById("book"), step=document.getElementById("photoS
 if(book&&step){
   book.addEventListener("submit",async()=>{
     try{if(typeof S==="undefined"||!S.sized)return}catch(_){return}
+    try{if(typeof SERVICE_ZIP!=="undefined"&&GATE&&!SERVICE_ZIP.test(document.getElementById("czip").value.trim()))return}catch(_){}
     const c=calc(), w=+document.getElementById("w").value, g=id=>document.getElementById(id).value.trim();
     const body={cust:{name:g("cname"),phone:g("cphone"),email:g("cemail"),addr:g("caddr"),city:g("ccity"),state:g("cstate").toUpperCase(),zip:g("czip")},
       cfg:{w,p:+document.getElementById("p").value,roof:S.roof,mount:S.mount,color:S.color,fans:S.fans,base:S.base,ds:S.ds,tier:S.tier,term:S.term},
