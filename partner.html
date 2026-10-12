@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Gilco Trade Partner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#f7f8f9; --panel:#fff; --ink:#1d2329; --muted:#5d6872; --line:#d3d8dd;
+  --bronze:#8a5a2b; --bronze-soft:#f3e9de; --price:#1d5fa8; --ok:#2f7d4f; --warn:#a4661a; --bad:#9b3d33;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--body)}
+[hidden]{display:none!important}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 48px;display:grid;gap:14px}
+header{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:3px solid var(--bronze);margin-inline:-16px;padding:10px 16px;display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+.brand{font-family:var(--display);font-weight:700;font-size:24px;line-height:1;text-transform:uppercase;letter-spacing:.02em}
+.brand small{display:block;font-size:12px;color:var(--muted);letter-spacing:.12em;font-weight:600;margin-top:4px}
+.who{font-size:13px;color:var(--muted);text-align:right}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:12px}
+h1,h2{font-family:var(--display);text-transform:uppercase;letter-spacing:.03em;margin:0}
+h1{font-size:28px;line-height:1.05}h2{font-size:19px;font-weight:600}
+.label{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fact{display:grid;gap:2px}.fact b{font-size:17px}
+.fact.pay b{font-family:var(--display);font-size:30px;color:var(--price);line-height:1}
+.fact.wide{grid-column:1/-1}
+.btn{appearance:none;border:1px solid var(--bronze);background:var(--bronze);color:#fff;font:700 16px var(--body);padding:14px 16px;border-radius:9px;cursor:pointer;text-align:center;text-decoration:none;display:block;width:100%}
+.btn.ghost{background:var(--panel);color:var(--ink);border-color:var(--line)}
+.btn.warn{background:var(--panel);color:var(--bad);border-color:#e3bdb8}
+.btn:disabled{opacity:.55;cursor:default}
+.btns{display:grid;gap:10px}.btns.two{grid-template-columns:1fr 1fr}
+.note{margin:0;color:var(--muted);font-size:14px}
+.timer{font-family:var(--mono);font-size:13px;color:var(--warn)}
+.flag{border-radius:9px;padding:12px 14px;font-size:14.5px}
+.flag.ok{background:#e3f1e8;color:#1f5c38}.flag.bad{background:#f4e3e1;color:var(--bad)}.flag.info{background:var(--bronze-soft);color:#5c3a17}
+a{color:var(--price)}
+.addr{font-size:18px;font-weight:700;line-height:1.3}
+.sched{display:grid;gap:6px}
+.sched div{display:flex;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:14px}
+.sched div.hi{background:#fdf3e2;border-color:#f0d6aa}.sched div.inst{background:#eef1f3;font-weight:700}
+.sched b{text-align:right}
+.chk{display:grid;gap:6px}
+.chk label{display:grid;grid-template-columns:26px 1fr auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:9px 10px;font-size:14px;cursor:pointer}
+.chk input{width:20px;height:20px;accent-color:var(--ok)}
+.chk label.on{background:#eef7f1;border-color:#b9dcc7}
+.chk em{font-style:normal;font-family:var(--mono);font-size:12.5px;color:var(--muted);white-space:nowrap}
+ul.list{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:8px}.photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+textarea{width:100%;min-height:90px;font:15px var(--body);padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+textarea:focus-visible,.btn:focus-visible,input:focus-visible{outline:2px solid var(--bronze);outline-offset:2px}
+.log{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:13.5px}.log li{border-left:3px solid var(--line);padding-left:10px}.log li.missing{border-color:var(--bad)}.log li.complete,.log li.site_check{border-color:var(--ok)}
+.log span{color:var(--muted);font-size:12px}
+.contact{display:grid;gap:4px}
+.loading{padding:40px 0;text-align:center;color:var(--muted)}
+</style>
+</head><body>
+<div class="wrap">
+  <header><div class="brand">Gilco Construction<small>Trade Partner</small></div><div class="who" id="who"></div></header>
+  <main id="app" class="wrap" style="padding:0"><p class="loading">Loading your job…</p></main>
+</div>
+<script>
+const SB="https://tgbgianugkdtvvoodiuf.supabase.co/rest/v1/rpc/", KEY="sb_publishable_hAVUN6R20jFjy8lvFAEBnA_Nu9okkcj";
+const TOKEN=new URLSearchParams(location.search).get("t")||"";
+const $=id=>document.getElementById(id);
+const esc=t=>String(t==null?"":t).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const money=n=>"$"+(+n||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const day=s=>s?new Date(s+"T12:00").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"}):"To be scheduled";
+const when=t=>t?new Date(t).toLocaleString("en-US",{weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"";
+let V=null, BUSY=false, TIMER=null;
+async function rpc(fn,args){
+  const r=await fetch(SB+fn,{method:"POST",headers:{"apikey":KEY,"Content-Type":"application/json"},body:JSON.stringify(args)});
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  return r.json();
+}
+async function act(fn,args,busyText){
+  if(BUSY)return;BUSY=true;
+  document.querySelectorAll("button").forEach(b=>b.disabled=true);
+  const m=$("msg");if(m&&busyText)m.textContent=busyText;
+  try{V=await rpc(fn,{p_token:TOKEN,...args});render()}
+  catch(e){if(m)m.textContent="Couldn't reach Gilco. Check your signal and try again.";document.querySelectorAll("button").forEach(b=>b.disabled=false)}
+  finally{BUSY=false}
+}
+function shell(inner){$("app").innerHTML=inner}
+function render(){
+  clearInterval(TIMER);
+  const v=V||{};$("who").textContent=v.partner?v.partner:"";
+  const st=v.state;
+  if(st==="not_found")return shell(`<section class="panel"><h2>Link not found</h2><p class="note">This job link isn't valid. Call Gilco Construction for a new one.</p></section>`);
+  if(st==="taken")return shell(`<section class="panel"><h2>Job already taken</h2><p class="note">This job went to another installer. Thanks for looking — more are coming.</p></section>`);
+  if(st==="expired")return shell(`<section class="panel"><h2>Offer expired</h2><p class="note">The time to answer this offer ran out, so it moved to the next installer.</p></section>`);
+  if(st==="declined")return shell(`<section class="panel"><h2>You passed on this job</h2><p class="note">No problem. We'll send the next one your way.</p></section>`);
+  if(st==="offer")return renderOffer(v);
+  if(st==="accepted")return renderJob(v);
+  shell(`<section class="panel"><h2>Offer closed</h2><p class="note">This offer isn't open anymore. Call Gilco Construction with any questions.</p></section>`);
+}
+function renderOffer(v){
+  shell(`<section class="panel">
+    <div class="label">New job offer</div>
+    <h1>Aluminum patio cover install</h1>
+    <div class="facts">
+      <div class="fact wide"><span class="label">Size</span><b>${esc(v.size)}</b></div>
+      <div class="fact"><span class="label">Area</span><b>${esc(v.area)}</b></div>
+      <div class="fact"><span class="label">Install date</span><b>${esc(day(v.install_date))}</b></div>
+      <div class="fact pay wide"><span class="label">Pay (labor)</span><b>${money(v.pay)}</b></div>
+    </div>
+    <p class="timer" id="timer"></p>
+    <p class="note">Accept to see the job address, homeowner, materials vendor and the full work order.</p>
+    <div class="btns">
+      <button class="btn" id="acc" type="button">Accept this job</button>
+      <button class="btn ghost" id="dec" type="button">Pass on this one</button>
+    </div>
+    <div id="decBox" hidden class="btns"><textarea id="why" placeholder="Optional: why are you passing? (booked that day, too far, pay…)" maxlength="500"></textarea>
+      <button class="btn warn" id="decGo" type="button">Pass on this job</button></div>
+    <p class="note" id="msg" aria-live="polite"></p>
+  </section>`);
+  const tick=()=>{const ms=new Date(v.expires_at)-Date.now();
+    if(ms<=0){clearInterval(TIMER);load();return}
+    const h=Math.floor(ms/3.6e6),m=Math.floor(ms%3.6e6/6e4);
+    $("timer").textContent=`Answer within ${h?h+" hr ":""}${m} min (by ${when(v.expires_at)})`};
+  tick();TIMER=setInterval(tick,30000);
+  $("acc").onclick=()=>act("tp_accept",{},"Accepting…");
+  $("dec").onclick=()=>{$("decBox").hidden=false;$("dec").hidden=true;$("why").focus()};
+  $("decGo").onclick=()=>act("tp_decline",{p_reason:$("why").value.trim()||null},"Sending…");
+}
+function renderJob(v){
+  const d=v.details||{}, ck=v.checklist||{}, s=d.sales||{};
+  const mats=(d.materials||[]), got=mats.filter((m,i)=>ck["m"+i]).length;
+  const maps="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(d.address||"");
+  const dir="https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(d.address||"");
+  const status={accepted:["info","You accepted this job. Thanks!"],site_checked:["ok","Site check done."],complete:["ok","You marked this job complete. Gilco will schedule the walkthrough and payment."]}[v.status]||["info",""];
+  const ev=(v.events||[]).filter(e=>e.kind!=="accepted");
+  const evName={missing:"Missing / damaged materials reported",site_check:"Site check done",complete:"Job marked complete",note:"Note sent"};
+  const vendTel=d.vendor_phone?`<a href="tel:${esc(d.vendor_phone)}">${esc(d.vendor_phone)}</a>`:"";
+  const salesTel=s.phone?`<a href="tel:${esc(s.phone)}">${esc(s.phone)}</a>`:"";
+  shell(`
+  <section class="panel">
+    <div class="flag ${status[0]}">${esc(status[1])}</div>
+    <div class="label">Job ${esc(d.wo_no||v.job_no)}</div>
+    <h1>${esc(v.size)}</h1>
+    <div class="facts">
+      <div class="fact"><span class="label">Install date</span><b>${esc(day(v.install_date))}</b></div>
+      <div class="fact pay"><span class="label">Work order amount</span><b>${money(v.pay)}</b></div>
+      <div class="fact"><span class="label">Covered area</span><b>${esc(d.sf||"")} sq ft</b></div>
+      <div class="fact"><span class="label">Color</span><b>${esc(d.color||"")}</b></div>
+    </div>
+  </section>
+  <section class="panel">
+    <h2>Job site</h2>
+    <div class="addr">${esc(d.address)}</div>
+    <div class="note">Homeowner: <b style="color:var(--ink)">${esc(d.homeowner)}</b></div>
+    <div class="btns two"><a class="btn" href="${esc(dir)}" target="_blank" rel="noopener">Directions</a><a class="btn ghost" href="${esc(maps)}" target="_blank" rel="noopener">See on map</a></div>
+    ${(d.photos||[]).length?`<div class="label">Property photos</div><div class="photos">${d.photos.map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="Property photo" loading="lazy"></a>`).join("")}</div>`:`<p class="note">Property photos will show here when they're added. Use See on map → Street View to spot the house from the front.</p>`}
+    ${d.notes?`<div class="label">Site notes</div><p style="margin:0">${esc(d.notes)}</p>`:""}
+  </section>
+  <section class="panel">
+    <h2>Schedule</h2>
+    <div class="sched">
+      <div><span>Materials delivered</span><b>${esc(day(d.delivery_date))}</b></div>
+      <div class="hi"><span>Site check: count materials</span><b>${esc(day(d.site_check_date))}</b></div>
+      <div class="inst"><span>Install day</span><b>${esc(day(d.install_date||v.install_date))}</b></div>
+    </div>
+  </section>
+  <section class="panel">
+    <h2>Materials vendor</h2>
+    <div class="contact"><b>${esc(d.vendor||"")}</b>${vendTel?`<span>${vendTel}</span>`:""}${d.vendor_email?`<span><a href="mailto:${esc(d.vendor_email)}">${esc(d.vendor_email)}</a></span>`:""}</div>
+    <p class="note">On the site-check day, count everything below. If anything is short or damaged, report it here and call the vendor.</p>
+  </section>
+  <section class="panel">
+    <h2>Materials to verify on site</h2>
+    <div class="label">${got} of ${mats.length} checked</div>
+    <div class="chk">${mats.map((m,i)=>`<label class="${ck["m"+i]?"on":""}"><input type="checkbox" data-k="m${i}" ${ck["m"+i]?"checked":""}><span>${esc(m.item)}</span><em>${(+m.qty).toLocaleString()} ${esc(m.unit)}</em></label>`).join("")}</div>
+    <div class="btns">
+      ${v.site_check_at?`<p class="note">Site check done ${esc(when(v.site_check_at))}.</p>`:`<button class="btn" id="siteOk" type="button">Site check done — materials are here</button>`}
+      <button class="btn warn" id="missBtn" type="button">Report missing or damaged materials</button>
+    </div>
+    <div id="missBox" hidden class="btns"><textarea id="missTxt" placeholder="What's short or damaged? (item and how many)" maxlength="2000"></textarea>
+      <button class="btn warn" id="missGo" type="button">Send report</button></div>
+  </section>
+  <section class="panel">
+    <h2>Scope of work</h2>
+    <ul class="list">${(d.scope||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+    ${(d.not_scope||[]).length?`<div class="label">Not in scope</div><ul class="list">${d.not_scope.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}
+  </section>
+  <section class="panel">
+    <h2>Finish the job</h2>
+    ${v.completed_at?`<p class="note">Marked complete ${esc(when(v.completed_at))}.</p>`:`<textarea id="doneTxt" placeholder="Optional note for Gilco (anything the homeowner should know)" maxlength="2000"></textarea>
+    <button class="btn" id="doneGo" type="button">Job complete</button>`}
+    <p class="note">Gilco does a walkthrough, then pays the work order amount.</p>
+  </section>
+  <section class="panel">
+    <h2>Your Gilco contact</h2>
+    <div class="contact"><b>${esc(s.name||"")}</b>${salesTel?`<span>${salesTel}</span>`:""}${s.email?`<span><a href="mailto:${esc(s.email)}">${esc(s.email)}</a></span>`:""}</div>
+    ${ev.length?`<div class="label">Activity</div><ul class="log">${ev.map(e=>`<li class="${esc(e.kind)}"><b>${esc(evName[e.kind]||e.kind)}</b> <span>${esc(when(e.at))}</span>${e.note?`<br>${esc(e.note)}`:""}</li>`).join("")}</ul>`:""}
+    <p class="note" id="msg" aria-live="polite"></p>
+  </section>`);
+  document.querySelectorAll(".chk input").forEach(c=>c.onchange=()=>act("tp_check",{p_key:c.dataset.k,p_val:c.checked}));
+  const so=$("siteOk");if(so)so.onclick=()=>act("tp_report",{p_kind:"site_check",p_note:`${got} of ${mats.length} items checked`},"Saving…");
+  $("missBtn").onclick=()=>{$("missBox").hidden=false;$("missTxt").focus()};
+  $("missGo").onclick=()=>{const t=$("missTxt").value.trim();if(!t){$("missTxt").focus();return}
+    act("tp_report",{p_kind:"missing",p_note:t},"Sending report…").then(()=>{
+      const to=[d.vendor_email,s.email].filter(Boolean).join(",");
+      const m=$("msg");if(m)m.innerHTML=`Report saved for Gilco. <a href="mailto:${esc(to)}?subject=${encodeURIComponent("Missing materials – "+(d.wo_no||v.job_no))}&body=${encodeURIComponent("Job "+(d.wo_no||v.job_no)+" ("+(v.size||"")+")\n\n"+t)}">Email the vendor and Gilco</a>${d.vendor_phone?` or call <a href="tel:${esc(d.vendor_phone)}">${esc(d.vendor_phone)}</a>`:""}.`})};
+  const dg=$("doneGo");if(dg)dg.onclick=()=>act("tp_report",{p_kind:"complete",p_note:$("doneTxt").value.trim()||null},"Saving…");
+}
+async function load(){
+  if(!/^[0-9a-f-]{36}$/i.test(TOKEN)){V={state:"not_found"};render();return}
+  try{V=await rpc("tp_view",{p_token:TOKEN});render()}
+  catch(e){shell(`<section class="panel"><h2>Can't load the job</h2><p class="note">Check your signal and try again.</p><button class="btn ghost" type="button" onclick="load()">Try again</button></section>`)}
+}
+load();
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!BUSY&&V&&V.state==="offer")load()});
+</script>
+</body></html>
