@@ -108,7 +108,7 @@ async function mountSpot(box,token,addr,spot){
   try{await loadLeaflet()}catch(_){box.querySelector("#gpSpotMsg").textContent="The map couldn't load. Check your signal and reload.";return}
   let center=spot?[spot.lat,spot.lng]:await geocode(addr), found=!!center;
   if(!center)center=[29.9236,-90.1985];
-  const m=satMap(box.querySelector("#gpMap"),center,found?20:13);
+  const m=satMap(box.querySelector("#gpMap"),center,found?19:13);
   let pin=spot?L.marker([spot.lat,spot.lng],{draggable:true,icon:pinIcon()}).addTo(m):null;
   if(!found)box.querySelector("#gpSpotMsg").textContent="We couldn't find your address on the map. Zoom in to your house, then tap the spot.";
   const place=ll=>{if(pin)pin.setLatLng(ll);else pin=L.marker(ll,{draggable:true,icon:pinIcon()}).addTo(m);box.querySelector("#gpSpotMsg").textContent="Tap Save this spot when it's right."};
@@ -122,7 +122,7 @@ async function mountSpot(box,token,addr,spot){
   };
 }
 function showSpot(el,spot){ /* read-only map for the installer */
-  return loadLeaflet().then(()=>{const m=satMap(el,[spot.lat,spot.lng],20);L.marker([spot.lat,spot.lng],{icon:pinIcon()}).addTo(m)});
+  return loadLeaflet().then(()=>{const m=satMap(el,[spot.lat,spot.lng],19);L.marker([spot.lat,spot.lng],{icon:pinIcon()}).addTo(m)});
 }
 window.GilcoPhotos={rpc,mount,mountSpot,showSpot,SLOTS};
 /* estimator hook: save the quote when "Get my quote" is pressed, then show the photo step */
