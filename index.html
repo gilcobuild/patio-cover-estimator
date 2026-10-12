@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head><body>
+<title>Gilco Patio Cover Estimator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: single phone-first column — plan drawing, inputs, price card; owner tab swaps in the cost breakdown and editable rates */
+:root{
+  --bg:#f7f8f9; --panel:#ffffff; --ink:#1d2329; --muted:#5d6872; --line:#d3d8dd;
+  --bronze:#8a5a2b; --price:#1d5fa8; --bronze-soft:#f3e9de; --steel:#4b5a68; --ok:#2f7d4f; --warn:#a4661a;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+:root{--on-accent:#fff;color-scheme:light}
+*{box-sizing:border-box}
+.ghost-bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.045}
+.ghost-bg *{fill:none;stroke:var(--bronze);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ghost-bg .thick{stroke-width:5}
+.wrap{position:relative;z-index:1}
+.panel{backdrop-filter:blur(2px)}
+.themebar{display:grid;gap:8px;border:1px dashed var(--line);border-radius:10px;padding:10px 12px;background:var(--panel)}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:16px 48px;display:grid;gap:16px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;border-bottom:3px solid var(--bronze);background:var(--bg);margin-inline:-16px;padding:10px 16px;box-shadow:0 6px 12px -10px rgba(0,0,0,.35)}
+.hdrprice{display:grid;justify-items:end;line-height:1.05;text-align:right;flex:none;margin-left:auto}
+header .brand{flex:1 1 0;min-width:0}
+.hdrprice .hp-l{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.hdrprice b{font-family:var(--display);font-weight:700;font-size:32px;color:var(--price);font-variant-numeric:tabular-nums;transition:color .2s}
+.hdrprice .hp-m{font-family:var(--mono);font-size:11px;color:var(--muted)}
+#tabs{flex-basis:100%;justify-content:flex-end}
+@media (max-width:420px){.brand{font-size:19px}.brand small{font-size:10px;letter-spacing:.08em}.hdrprice b{font-size:26px}}
+.brand{font-family:var(--display);font-weight:700;font-size:28px;letter-spacing:.02em;line-height:1;text-transform:uppercase}
+.brand small{display:block;font-size:14px;color:var(--muted);letter-spacing:.12em;font-weight:600;margin-top:4px}
+.tabs{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:3px}
+.tabs button{border:0;background:none;color:var(--muted);font:600 13px var(--body);padding:7px 12px;border-radius:6px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--panel)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:14px}
+h2{font-family:var(--display);font-weight:600;font-size:20px;text-transform:uppercase;letter-spacing:.04em;margin:0;text-wrap:balance}
+.label{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:grid;gap:6px;min-width:0}
+input[type=number],input[type=text],input[type=email],input[type=tel],input[type=date]{width:100%;font:500 16px var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:10px 12px}
+input:focus-visible,button:focus-visible{outline:2px solid var(--bronze);outline-offset:2px}
+.unit{position:relative}.unit input{padding-right:36px}.unit span{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px}
+.seg{display:grid;gap:8px}
+.seg.three{grid-template-columns:repeat(3,1fr)}.seg.four{grid-template-columns:repeat(4,1fr)}.seg.four .opt{text-align:center;padding:10px 4px}.seg.two{grid-template-columns:1fr 1fr}
+.opt{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px;text-align:left;cursor:pointer;color:var(--ink);font:inherit;display:grid;gap:2px;min-width:0}
+.opt .pic{width:100%;height:34px;margin-bottom:6px}
+.opt .pic.tall{height:64px}
+.ic-prof{fill:none;stroke:var(--bronze);stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.ic-slab{fill:var(--bronze-soft);stroke:var(--bronze);stroke-width:2.5}
+.ic-foam{stroke:var(--bronze);stroke-width:1.5;stroke-dasharray:3 4}
+.ic-roof{stroke:var(--bronze);stroke-width:5;stroke-linecap:round;fill:none}
+.ic-post{fill:var(--ink)}
+.ic-house{fill:var(--line)}
+.ic-house-roof{fill:none;stroke:var(--muted);stroke-width:2.5;stroke-linejoin:round}
+.ic-door{fill:var(--muted);opacity:.5}
+.ic-slab-old{fill:var(--line);stroke:var(--muted);stroke-width:1.5}
+.ic-slab-new{fill:var(--bronze-soft);stroke:var(--bronze);stroke-width:2}
+.ic-pour{stroke:var(--bronze);stroke-width:1.5;stroke-linecap:round}
+.ic-ground{stroke:var(--muted);stroke-width:1.5}
+.opt b{font-size:14px}.opt span{font-size:12px;color:var(--muted)}
+.opt[aria-pressed="true"]{border-color:var(--bronze);background:var(--bronze-soft);box-shadow:inset 0 0 0 1px var(--bronze)}
+.swatches{display:flex;flex-wrap:wrap;gap:8px}
+.sw{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--bg);border-radius:20px;padding:5px 11px 5px 5px;font:500 13px var(--body);color:var(--ink);cursor:pointer}
+.sw i{width:20px;height:20px;border-radius:50%;border:1px solid rgba(0,0,0,.2)}
+.sw[aria-pressed="true"]{border-color:var(--bronze);box-shadow:inset 0 0 0 1px var(--bronze)}
+.check{display:flex;align-items:center;gap:10px;font-size:14px}
+.check input{width:20px;height:20px;accent-color:var(--bronze)}
+.plan{background:var(--bg);border-radius:8px;padding:8px;overflow-x:auto}
+.plan svg{display:block;width:100%;height:auto;max-height:240px}
+.price{display:grid;gap:4px;background:var(--ink);color:var(--panel);border-radius:10px;padding:18px 16px}
+.price .big{font-family:var(--display);font-weight:700;font-size:48px;line-height:1;font-variant-numeric:tabular-nums}
+.price .sub{font-family:var(--mono);font-size:13px;opacity:.8}
+.price .note{font-size:12px;opacity:.7}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+td{padding:7px 0;border-bottom:1px solid var(--line);font-size:14px;vertical-align:top}
+td.n{text-align:right;font-family:var(--mono);font-size:13px;white-space:nowrap;padding-left:10px}
+td .q{color:var(--muted);font-size:12px}
+tr.grp td{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding-top:14px;border-bottom:2px solid var(--line)}
+.mk{display:inline-block;width:20px;font-weight:700}.mk.yes{color:var(--ok)}.mk.no{color:var(--muted)}
+tr.total td{font-weight:600;border-bottom:0;border-top:2px solid var(--ink)}
+tr.profit td{color:var(--ok);font-weight:600}
+.bar{display:flex;height:14px;border-radius:7px;overflow:hidden}
+.bar div{height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:5px}.legend i{width:10px;height:10px;border-radius:2px}
+.flag{background:var(--bronze-soft);border:1px dashed var(--bronze);border-radius:8px;padding:10px 12px;font-size:13px}
+.rates{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rates .field input{font-size:15px;padding:8px 10px}
+.btn{border:0;border-radius:8px;padding:13px 16px;font:600 15px var(--body);cursor:pointer;background:var(--bronze);color:var(--on-accent)}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.btns .btn{flex:1 1 160px}
+.ok{color:var(--ok);font-size:13px;font-weight:600}
+textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:10px}
+.v3d{position:relative;height:320px;border-radius:8px;overflow:hidden;background:var(--bg);touch-action:none;cursor:grab}
+.v3d canvas{display:block;width:100%!important;height:100%!important}
+.v3dmsg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:16px}
+.dspick{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:20px;padding:8px 14px;font:600 13px var(--body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--bronze);border-color:var(--bronze);color:var(--on-accent)}
+.sheet-overlay{position:fixed;inset:0;z-index:50;background:rgba(20,24,28,.92);overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 12px) 12px 32px}
+.sheet-bar{max-width:816px;margin:0 auto 10px;display:flex;justify-content:space-between;align-items:center;color:#fff}
+.sheet-bar .btn{background:#fff;color:var(--ink);border:0;padding:9px 14px}
+/* letter page: 8.5in x 11in at 96px/in, scaled down to fit the screen */
+.sheet-wrap{margin:0 auto;position:relative}
+.sheet{position:absolute;top:0;left:0;width:816px;min-height:1056px;transform-origin:0 0;background:#fff;color:#1d2329;box-shadow:0 12px 40px rgba(0,0,0,.35);padding:44px 56px 30px;font-size:12.5px;line-height:1.4;display:flex;flex-direction:column;overflow:hidden}
+.sheet .sh-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:nowrap;border-bottom:3px solid var(--bronze);padding-bottom:14px}
+.sheet .sh-co{font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:.02em;line-height:1}
+.sheet .sh-sub{font-size:10px;font-weight:600;letter-spacing:.1em;color:#5d6872;margin-top:4px}
+.sheet .sh-q{text-align:right;flex:none;margin-left:auto}.sheet .sh-q b{font-family:var(--display);font-size:28px;color:var(--bronze);display:block;line-height:1}
+.sheet .sh-q span{display:block;font-size:11px;color:#5d6872}
+.sheet .sh-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;color:#5d6872;text-transform:uppercase;margin:13px 0 4px;border-bottom:1px solid #d3d8dd;padding-bottom:3px}
+.sheet .sh-two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sheet .sh-two .sh-lbl{border:0;padding:0}
+.sheet .sh-sum{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--bronze-soft);border-radius:6px;padding:12px 14px;margin-top:16px}
+.sheet .sh-sum h3{margin:0 0 4px;font-size:15px}.sheet .sh-sum p{margin:0;color:#5d6872;font-size:11.5px}
+.sheet .sh-sum svg{width:150px;flex:none;height:auto}
+.sheet ul{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:2px}
+.sheet li{display:flex;gap:8px}.sheet li i{font-style:normal;font-weight:700;width:14px;flex:none}
+.sheet li.y i{color:#2f7d4f}.sheet li.n i{color:#8a939b}
+.sheet .sh-price{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#1d2329;color:#c9d1d8;border-radius:6px;padding:14px 16px;margin-top:18px}
+.sheet .sh-price b{font-family:var(--display);font-size:34px;color:#7fb2ea;font-variant-numeric:tabular-nums}
+.sheet .sh-price small{display:block;font-size:10.5px}
+.sheet .sh-tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.sheet .sh-tbl th{text-align:left;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#5d6872;border-bottom:1.5px solid #1d2329;padding:4px 6px}
+.sheet .sh-tbl td{padding:5px 6px;border-bottom:1px solid #e3e6e9;vertical-align:top}
+.sheet .sh-tbl .n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.sheet .sh-tbl tfoot td{font-weight:700;border-top:1.5px solid #1d2329;border-bottom:0}
+.sheet .sh-tbl tr.tot td{font-weight:700;background:#f4f5f6}.sheet .sh-tbl tr.pro td{font-weight:700;color:#2f7d4f}
+.sheet .sh-tbl.sched td:first-child{width:46%;font-weight:600}
+.sheet .sh-tbl tr.hi td{background:#fdf3e2;color:#7a4a0c}
+.sheet .sh-sign{display:grid;grid-template-columns:2fr 1fr 2fr 1fr;gap:14px;margin-top:30px}
+.sheet .sh-sign div{border-top:1px solid #1d2329;padding-top:3px;font-size:10px;color:#5d6872}
+.sheet .sh-foot{display:flex;justify-content:space-between;margin-top:auto;padding-top:16px;font-size:10px;color:#8a939b}
+.addr3{display:grid;grid-template-columns:2fr 1fr 1.2fr;gap:12px}
+#finPanel{scroll-margin-top:170px}
+.finbtn{margin-top:3px;border:1px solid var(--price);background:none;color:var(--price);border-radius:14px;padding:2px 10px;font:600 11px var(--body);cursor:pointer}
+.terms{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.term{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:10px 6px;cursor:pointer;font:inherit;display:grid;gap:2px;text-align:center}
+.term em{font-style:normal;font-size:12px;color:var(--muted);font-weight:600}
+.term b{font-family:var(--display);font-size:22px;color:var(--price);font-variant-numeric:tabular-nums}
+.term span{font-size:11px;color:var(--muted)}
+.term[aria-pressed="true"]{border-color:var(--price);box-shadow:inset 0 0 0 1px var(--price);background:#eaf2fb}
+.fine{margin:0;font-size:11.5px;color:var(--muted);line-height:1.45}
+@media (max-width:380px){.terms{grid-template-columns:1fr 1fr}}
+.cal-head,.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal-head span{text-align:center;font-size:11px;font-weight:600;color:var(--muted)}
+.day{min-height:48px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink);font:inherit;cursor:pointer;display:grid;place-content:center;gap:1px;padding:2px}
+.day b{font-size:14px;font-variant-numeric:tabular-nums}.day em{font-style:normal;font-size:9px;font-weight:600;letter-spacing:.02em}
+.day.soon{background:var(--bg);color:#a7afb6;cursor:not-allowed;border-style:dashed}
+.day.book{background:#f4e3e1;border-color:#e3bdb8;color:#9b3d33;cursor:not-allowed}
+.day.book b{text-decoration:line-through}
+.day.sel{background:var(--bronze);border-color:var(--bronze);color:var(--on-accent)}
+.cal-key{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11.5px;color:var(--muted)}
+.cal-key span{display:flex;align-items:center;gap:5px}.cal-key i{width:12px;height:12px;border-radius:3px;border:1px solid var(--line)}
+.k-open{background:var(--panel)}.k-book{background:#f4e3e1;border-color:#e3bdb8!important}.k-soon{background:var(--bg);border-style:dashed!important}
+.hint{margin:0;color:var(--muted);font-size:14px;max-width:65ch}
+.sizebtn{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;border:2px solid var(--bronze);background:var(--bronze-soft);border-radius:10px;padding:12px 14px;cursor:pointer;color:var(--ink);font:inherit;text-align:left}
+.sizebtn em{display:block;font-style:normal;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.sizebtn b{font-family:var(--display);font-size:30px;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums}
+.sizebtn .chg{font-weight:600;font-size:14px;color:var(--bronze);white-space:nowrap}
+.picker{display:grid;grid-template-columns:1fr 1fr;gap:12px;border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--bg)}
+.picker .col{display:grid;gap:6px;min-width:0}
+.list{max-height:230px;overflow-y:auto;scroll-snap-type:y proximity;display:grid;gap:4px;padding-right:4px;overscroll-behavior:contain}
+.list button{scroll-snap-align:center;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:7px;padding:11px 8px;font:600 18px var(--display);cursor:pointer;font-variant-numeric:tabular-nums}
+.list button[aria-selected="true"]{background:var(--bronze);border-color:var(--bronze);color:var(--on-accent)}
+.picker .done{grid-column:1/-1}
+@media (max-width:380px){
+.seg.three{grid-template-columns:1fr}.row2,.rates{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<svg class="ghost-bg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+  <rect x="60" y="20" width="280" height="220"/>
+  <rect x="90" y="150" width="40" height="90"/>
+  <rect x="190" y="130" width="110" height="60"/><path d="M245 130V190M190 160H300"/>
+  <path d="M10 285L60 240H340L390 285Z"/>
+  <path class="thick" d="M60 82L340 82"/>
+  <path d="M60 82L20 150M340 82L380 150"/>
+  <g id="ghostRibs"></g>
+  <path class="thick" d="M16 152H384"/>
+  <path class="thick" d="M24 156V283M200 156V283M376 156V283"/>
+  <path d="M0 285H400"/>
+</svg>
+<div class="wrap">
+  <header>
+    <div class="brand">Gilco Construction<small>Aluminum Patio Covers</small></div>
+    <div class="hdrprice" aria-live="polite"><span class="hp-l">Your price</span><b id="hdrSell">$0</b><span class="hp-m" id="hdrMeta"></span><button class="finbtn" id="finBtn" type="button">Financing</button></div>
+  </header>
+
+  <section class="panel">
+    <h2>1. Pick your size</h2>
+    <p class="hint">Out from the house: 8' to 24'. Width along the house: 10' to 40'. Both in 2-foot steps.</p>
+    <input id="w" type="hidden" value="20"><input id="p" type="hidden" value="12">
+    <button class="sizebtn" id="sizeBtn" type="button" aria-expanded="false" aria-controls="picker">
+      <span><em>Your size</em><b id="sizeLabel">12' × 20'</b></span><span class="chg" id="sizeChg">Change size ▾</span>
+    </button>
+    <div class="picker" id="picker" hidden>
+      <div class="col"><div class="label">Out from house</div><div class="list" id="listP" role="listbox" aria-label="Out from house"></div></div>
+      <div class="col"><div class="label">Width along house</div><div class="list" id="listW" role="listbox" aria-label="Width along house"></div></div>
+      <button class="btn done" id="sizeDone" type="button">Done</button>
+    </div>
+    <div class="plan" aria-label="Top view plan of the patio cover"><svg id="plan" viewBox="0 0 340 220"></svg></div>
+  </section>
+
+  <section class="panel">
+    <h2>2. Choose your style</h2>
+    <div class="seg three" id="roof">
+      <button class="opt" data-v="wpan" aria-pressed="true"><svg class="pic" viewBox="0 0 120 40" aria-hidden="true"><path class="ic-prof" d="M4 28H12L17 12H27L32 28H40L45 12H55L60 28H68L73 12H83L88 28H96L101 12H111L116 28"/></svg><b>W-Pan</b><span>Ribbed, most popular</span></button>
+      <button class="opt" data-v="flat" aria-pressed="false"><svg class="pic" viewBox="0 0 120 40" aria-hidden="true"><path class="ic-prof" d="M4 26H30V17H35V26H62V17H67V26H94V17H99V26H116"/></svg><b>Flat Pan</b><span>Clean flat look</span></button>
+      <button class="opt" data-v="insul" aria-pressed="false"><svg class="pic" viewBox="0 0 120 40" aria-hidden="true"><rect class="ic-slab" x="4" y="10" width="112" height="20" rx="1"/><path class="ic-foam" d="M8 20H112"/></svg><b>Insulated</b><span>3" foam core, cooler</span></button>
+    </div>
+    <div class="label">Mounting</div>
+    <div class="seg two" id="mount">
+      <button class="opt" data-v="att" aria-pressed="true"><svg class="pic tall" viewBox="0 0 120 72" aria-hidden="true"><rect class="ic-house" x="4" y="4" width="22" height="62"/><path class="ic-house-roof" d="M2 8L15 0L28 8"/><rect class="ic-door" x="10" y="40" width="10" height="26"/><path class="ic-roof" d="M26 18L108 26"/><rect class="ic-post" x="102" y="26" width="5" height="40"/><path class="ic-ground" d="M2 66H118"/></svg><b>Attached</b><span>Ties into the house</span></button>
+      <button class="opt" data-v="free" aria-pressed="false"><svg class="pic tall" viewBox="0 0 120 72" aria-hidden="true"><path class="ic-roof" d="M10 20L110 28"/><rect class="ic-post" x="14" y="21" width="5" height="45"/><rect class="ic-post" x="101" y="28" width="5" height="38"/><path class="ic-ground" d="M2 66H118"/></svg><b>Freestanding</b><span>Stands on its own posts</span></button>
+    </div>
+    <div class="label">Patio base</div>
+    <div class="seg two" id="base">
+      <button class="opt" type="button" data-v="have" aria-pressed="true"><svg class="pic" viewBox="0 0 120 40" aria-hidden="true"><rect class="ic-slab-old" x="6" y="22" width="108" height="10"/><rect class="ic-post" x="20" y="4" width="5" height="18"/><rect class="ic-post" x="95" y="4" width="5" height="18"/><path class="ic-ground" d="M2 32H118"/></svg><b>I have a slab</b><span>Posts anchor to your concrete</span></button>
+      <button class="opt" type="button" data-v="new" aria-pressed="false"><svg class="pic" viewBox="0 0 120 40" aria-hidden="true"><rect class="ic-slab-new" x="6" y="22" width="108" height="10"/><path class="ic-pour" d="M30 26L36 30M50 26L56 30M70 26L76 30M90 26L96 30"/><path class="ic-ground" d="M2 32H118"/></svg><b>Pour a new slab</b><span>4" concrete under the cover</span></button>
+    </div>
+    <div class="label">Color</div>
+    <div class="swatches" id="color"></div>
+    <div class="label">Extras</div>
+    <div class="label">Fan beams</div>
+    <p class="hint">Each beam is ready for a ceiling fan or light. Fans and wiring are not included.</p>
+    <div class="seg four" id="fans">
+      <button class="opt" type="button" data-v="0" aria-pressed="true"><b>None</b></button>
+      <button class="opt" type="button" data-v="1" aria-pressed="false"><b>1 beam</b></button>
+      <button class="opt" type="button" data-v="2" aria-pressed="false"><b>2 beams</b></button>
+      <button class="opt" type="button" data-v="3" aria-pressed="false"><b>3 beams</b></button>
+    </div>
+    <div class="label">Downspout location</div>
+    <p class="hint">Tap the front posts that should get a downspout. Each one runs down the post to a splash block.</p>
+    <div class="dspick" id="dsPick"></div>
+  </section>
+
+  <section class="panel">
+    <h2>See it in 3D</h2>
+    <div class="v3d" id="v3d"><p id="v3dMsg" class="hint v3dmsg" hidden>The 3D view couldn't load. Check your connection and reload the page.</p></div>
+    <div class="seg two" id="views">
+      <button class="opt" type="button" data-v="out" aria-pressed="true"><b>Outside view</b></button>
+      <button class="opt" type="button" data-v="under" aria-pressed="false"><b>Under the cover</b></button>
+    </div>
+  </section>
+
+
+  <!-- CUSTOMER VIEW -->
+  <section class="panel" id="finPanel">
+    <h2>Finance it</h2>
+    <p class="hint">See an estimated monthly payment. Pick your credit range, then tap a term.</p>
+    <div class="label">Your credit</div>
+    <div class="dspick" id="tierPick"></div>
+    <div class="label">Term</div>
+    <div class="terms" id="termPick"></div>
+    <p class="fine" id="finNote"></p>
+  </section>
+
+  <section class="panel" id="custView">
+    <h2>3. What you get</h2>
+    <p class="hint">We confirm the price with a quick site visit before anything is ordered.</p>
+    <table id="incl"></table>
+    <h2 style="margin-top:6px">4. Pick your install day</h2>
+    <p class="hint">Tell us where and when. We'll confirm the price with a quick site visit before anything is ordered.</p>
+    <form id="book" class="field" style="gap:12px">
+      <div class="field"><label class="label" for="cname">Name</label><input id="cname" type="text" required autocomplete="name"></div>
+      <div class="row2">
+        <div class="field"><label class="label" for="cphone">Phone</label><input id="cphone" type="tel" required autocomplete="tel"></div>
+        <div class="field"><label class="label" for="cemail">Email</label><input id="cemail" type="email" required autocomplete="email"></div>
+      </div>
+      <div class="field"><label class="label" for="caddr">Install street address</label><input id="caddr" type="text" required autocomplete="address-line1" placeholder="Start typing — your phone can fill it in"></div>
+      <div class="addr3">
+        <div class="field"><label class="label" for="ccity">City</label><input id="ccity" type="text" required autocomplete="address-level2"></div>
+        <div class="field"><label class="label" for="cstate">State</label><input id="cstate" type="text" required autocomplete="address-level1" value="LA" maxlength="2"></div>
+        <div class="field"><label class="label" for="czip">ZIP</label><input id="czip" type="text" required autocomplete="postal-code" inputmode="numeric" pattern="[0-9]{5}" maxlength="5"></div>
+      </div>
+      <div class="field"><span class="label" id="cdateLbl">Pick an install day</span><input id="cdate" type="hidden">
+        <div class="cal-head"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+        <div class="cal" id="dayPick" role="radiogroup" aria-labelledby="cdateLbl"></div>
+        <div class="cal-key"><span><i class="k-open"></i>Open</span><span><i class="k-book"></i>Booked</span><span><i class="k-soon"></i>Too soon (within 1 week)</span></div>
+      </div>
+      <button class="btn" type="submit">Get my quote</button>
+    </form>
+    <div id="quoteOut" hidden class="field" style="gap:10px">
+      <div class="flag">Your quote is ready. Emailing it, booking and payment get wired up in the next phase.</div>
+      <div class="btns"><button class="btn" id="viewPdf" type="button">View PDF quote</button></div>
+    </div>
+  </section>
+
+</div>
+<div class="sheet-overlay" id="pdfView" hidden role="dialog" aria-modal="true" aria-label="Quote preview">
+  <div class="sheet-bar"><b id="sheetTitle">Quote preview</b><button class="btn ghost" id="closePdf" type="button">Close</button></div>
+  <div class="sheet-wrap" id="sheetWrap"><div class="sheet" id="sheet"></div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+const COLORS=[["Bronze","#5a4232"],["White","#f6f6f3"],["Ivory","#efe6cf"],["Sandstone","#cdb994"],["Adobe","#b9906d"]];
+const DEFAULTS={
+  panel_wpan:4.50, panel_flat:5.25, panel_insul:11.00,
+  gutter_lf:15, ledger_lf:6, post_ea:90, anchor_ea:35, downspout_ea:45,
+  trim_lf:4, fastener_sf:0.40, fanbeam:150,
+  labor_sf:4.50, labor_insul_sf:5.75, labor_min:900,
+  slab_sf:9, delivery:150, contingency_pct:5, overhead_pct:15, profit_pct:20
+};
+const RATE_LABELS={
+  panel_wpan:"W-pan panel $/sf", panel_flat:"Flat pan panel $/sf", panel_insul:"Insulated panel $/sf",
+  gutter_lf:"Front beam/gutter $/lf", ledger_lf:"Fascia header + flashing $/lf", post_ea:"Post $/ea",
+  anchor_ea:"Post base + slab anchors $/ea", downspout_ea:"Downspout $/ea", trim_lf:"Trim/end caps $/lf",
+  fastener_sf:"Fasteners/sealant $/sf", fanbeam:"Fan/light beam $", labor_sf:"Install labor $/sf",
+  labor_insul_sf:"Insulated labor $/sf", labor_min:"Labor minimum $", slab_sf:'New 4" slab $/sf (sub)', delivery:"Delivery $",
+  contingency_pct:"Contingency %", overhead_pct:"Overhead + ads %", profit_pct:"Target profit %"
+};
+let R={...DEFAULTS};
+try{const s=JSON.parse(localStorage.getItem("gilcoRates")||"null");if(s)R={...DEFAULTS,...s}}catch(e){}
+const S={sized:false,roof:"wpan",mount:"att",color:"White",fans:0,base:"have",ds:["R"],tier:"vg",term:60};
+const $=id=>document.getElementById(id);
+const money=n=>"$"+Math.round(n).toLocaleString("en-US");
+
+function calc(ow,op){
+  const w=ow??Math.max(6,+$("w").value||0), p=op??Math.max(6,+$("p").value||0), sf=w*p;
+  const free=S.mount==="free", insul=S.roof==="insul";
+  const postsFront=Math.ceil(w/10)+1, posts=free?postsFront*2:postsFront;
+  const panelRate={wpan:R.panel_wpan,flat:R.panel_flat,insul:R.panel_insul}[S.roof];
+  const roofName={wpan:"W-pan roof panels",flat:"Flat pan roof panels",insul:'3" insulated roof panels'}[S.roof];
+  const ds=dsList(w).length;
+  const L=(name,qty,unit,rate)=>[name,`${qty} ${unit} × $${(+rate).toFixed(2)}`,qty*rate,qty,unit,rate];
+  const items=[
+    L(roofName,sf,"sf",panelRate),
+    L("Front beam / gutter",w,"lf",R.gutter_lf),
+    free?L("Rear beam",w,"lf",R.gutter_lf):L("Fascia header + flashing",w,"lf",R.ledger_lf),
+    L("Aluminum posts",posts,"ea",R.post_ea),
+    L("Post bases + slab anchors",posts,"ea",R.anchor_ea),
+    L("Downspout + elbows + splash block",ds,"ea",R.downspout_ea),
+    L("Fascia cover trim + end caps",2*p+w,"lf",R.trim_lf),
+    L("Fasteners + sealant",sf,"sf",R.fastener_sf)
+  ];
+  if(S.fans>0)items.push(L("Fan / light beam",S.fans,"ea",R.fanbeam));
+  const mat=items.reduce((a,i)=>a+i[2],0);
+  const labor=Math.max(R.labor_min, sf*(insul?R.labor_insul_sf:R.labor_sf)*(free?1.15:1));
+  const cont=(mat+labor)*R.contingency_pct/100;
+  const slab=S.base==="new"?sf*R.slab_sf:0;
+  const job=mat+labor+slab+R.delivery+cont;
+  const keep=1-(R.overhead_pct+R.profit_pct)/100;
+  const sell=Math.ceil((job/Math.max(keep,0.05))/25)*25;
+  const over=sell*R.overhead_pct/100, profit=sell-job-over;
+  return {w,p,sf,posts,items,mat,labor,slab,cont,job,sell,over,profit,free};
+}
+
+function drawPlan(c){
+  const W=340,H=220,pad=34,sc=Math.min((W-pad*2)/c.w,(H-pad*2-14)/c.p);
+  const rw=c.w*sc, rh=c.p*sc, x=(W-rw)/2, y=pad;
+  const ink="var(--ink)", br="var(--bronze)", mu="var(--muted)";
+  let s=`<rect x="${x}" y="${y}" width="${rw}" height="${rh}" fill="var(--bronze-soft)" stroke="${br}" stroke-width="2"/>`;
+  const step=S.roof==="wpan"?Math.max(6,1*sc):S.roof==="flat"?Math.max(8,1.5*sc):Math.max(10,4*sc);
+  for(let i=x+step;i<x+rw-1;i+=step) s+=`<line x1="${i}" y1="${y}" x2="${i}" y2="${y+rh}" stroke="${br}" stroke-opacity=".35" stroke-width="1"/>`;
+  if(!c.free) s+=`<rect x="${x-6}" y="${y-12}" width="${rw+12}" height="8" fill="${mu}"/><text x="${W/2}" y="${y-18}" text-anchor="middle" font-size="10" fill="${mu}" font-family="IBM Plex Mono,monospace">HOUSE WALL</text>`;
+  const n=Math.ceil(c.w/10)+1, rows=c.free?[y,y+rh]:[y+rh];
+  rows.forEach(py=>{for(let i=0;i<n;i++){const px=x+rw*i/(n-1);s+=`<rect x="${px-4}" y="${py-4}" width="8" height="8" fill="${ink}"/>`}});
+  dsList(c.w).forEach(i=>{const px=x+rw*i/(n-1);s+=`<circle cx="${px}" cy="${y+rh+10}" r="4" fill="none" stroke="${br}" stroke-width="2"/>`});
+  s+=`<text x="${W/2}" y="${y+rh+22}" text-anchor="middle" font-size="12" fill="${ink}" font-family="IBM Plex Mono,monospace">${c.w}' wide</text>`;
+  s+=`<text x="${x-10}" y="${y+rh/2}" text-anchor="end" dominant-baseline="middle" font-size="12" fill="${ink}" font-family="IBM Plex Mono,monospace">${c.p}'</text>`;
+  $("plan").innerHTML=s;
+}
+
+function buildList(id,input,start,max){
+  const el=$(id);let h="";
+  for(let v=start;v<=max;v+=2)h+=`<button type="button" role="option" data-v="${v}">${v}'</button>`;
+  el.innerHTML=h;
+  el.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{$(input).value=b.dataset.v;S.sized=true;render()}));
+}
+function syncPicker(){
+  [["listP","p"],["listW","w"]].forEach(([id,inp])=>{
+    $(id).querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===$(inp).value));
+  });
+  $("sizeLabel").textContent=S.sized?`${$("p").value}' × ${$("w").value}'`:"–' × –'";
+  if(!S.sized&&$("picker").hidden)$("sizeChg").textContent="Choose size ▾";
+}
+function scrollToSel(){
+  ["listP","listW"].forEach(id=>{const s=$(id).querySelector('[aria-selected="true"]');if(s)$(id).scrollTop=s.offsetTop-$(id).clientHeight/2+s.offsetHeight/2});
+}
+function togglePicker(open){
+  $("picker").hidden=!open;$("sizeBtn").setAttribute("aria-expanded",open);
+  $("sizeChg").textContent=open?"Close ▴":(S.sized?"Change size ▾":"Choose size ▾");
+  if(open)scrollToSel();
+}
+/* ---------- 3D view ---------- */
+const T={};
+function init3d(){
+  if(!window.THREE||!THREE.OrbitControls){$("v3dMsg").hidden=false;return}
+  const el=$("v3d");
+  T.r=new THREE.WebGLRenderer({antialias:true});
+  T.r.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  el.appendChild(T.r.domElement);
+  T.scene=new THREE.Scene();
+  T.cam=new THREE.PerspectiveCamera(40,1,0.1,600);
+  T.ctl=new THREE.OrbitControls(T.cam,T.r.domElement);
+  T.ctl.enableDamping=true;T.ctl.autoRotate=true;T.ctl.autoRotateSpeed=1.4;
+  T.ctl.maxPolarAngle=Math.PI*0.88;T.ctl.minDistance=2;T.ctl.maxDistance=160;T.ctl.enablePan=false;
+  T.ctl.addEventListener("start",()=>{T.ctl.autoRotate=false});
+  T.scene.add(new THREE.HemisphereLight(0xffffff,0x7a8670,0.85));
+  const sun=new THREE.DirectionalLight(0xffffff,0.75);sun.position.set(30,60,40);T.scene.add(sun);
+  const ground=new THREE.Mesh(new THREE.PlaneGeometry(400,400),new THREE.MeshStandardMaterial({color:0x7f9470,roughness:1}));
+  ground.rotation.x=-Math.PI/2;T.scene.add(ground);
+  const fit=()=>{const w=el.clientWidth,h=el.clientHeight;if(!w||!h)return;T.r.setSize(w,h,false);T.cam.aspect=w/h;T.cam.updateProjectionMatrix()};
+  fit();if(window.ResizeObserver)new ResizeObserver(fit).observe(el);else window.addEventListener("resize",fit);
+  const still=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  (function loop(){requestAnimationFrame(loop);T.ctl.update();if(T.cam.position.y<1.2)T.cam.position.y=1.2;if(!still&&T.fans)T.fans.forEach(f=>f.rotation.y+=0.045);T.r.render(T.scene,T.cam)})();
+}
+function setView(v){
+  if(!T.ctl)return;T.view=v;
+  const d=T.dims||{W:20,P:12,hw:10,hf:9.5};
+  if(v==="under"){
+    T.ctl.autoRotate=false;
+    T.cam.position.set(d.W*0.28,3.2,d.P*0.42);
+    T.ctl.target.set(-d.W*0.08,(d.hw+d.hf)/2-1.2,-d.P*0.12);
+  }else{
+    const D=Math.max(d.W,d.P)*1.35+10;
+    T.cam.position.set(D*0.85,D*0.5,D*1.05);T.ctl.target.set(0,4.5,0);T.ctl.autoRotate=true;
+  }
+  T.ctl.update();
+  document.querySelectorAll("#views .opt").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));
+}
+function frameCam(c){
+  const D=Math.max(c.w,c.p)*1.35+10;
+  T.cam.position.set(D*0.85,D*0.5,D*1.05);T.ctl.target.set(0,4.5,0);T.ctl.update();
+}
+function build3d(c){
+  if(!T.scene)return;
+  const bg=getComputedStyle(document.documentElement).getPropertyValue("--bg").trim();
+  try{T.scene.background=new THREE.Color(bg||"#eef0f2")}catch(_){}
+  if(T.g){T.scene.remove(T.g);T.g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose()})}
+  const g=new THREE.Group();T.g=g;T.scene.add(g);
+  const W=c.w,P=c.p,free=c.free,insul=S.roof==="insul";
+  const hw=10, hf=hw-Math.max(0.4,P*0.042);
+  const hex=(COLORS.find(x=>x[0]===S.color)||COLORS[0])[1];
+  const M=col=>new THREE.MeshStandardMaterial({color:col,roughness:0.55,metalness:0.25});
+  const alu=M(hex);
+  const box=(sx,sy,sz,x,y,z,m,parent)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),m);b.position.set(x,y,z);(parent||g).add(b);return b};
+  const sb=S.base==="new"?0.3:0;
+  if(sb)box(W+3,0.3,P+3,0,0.15,0,new THREE.MeshStandardMaterial({color:0xe6e2d8,roughness:0.9}));
+  if(!free){
+    /* house: wall face 1' behind the fascia; cover header fastens to the fascia board */
+    const fz=-P/2, wf=fz-1, HW=W+12, HD=24, fasH=0.75;
+    const eaveY=hw+0.1, HH=hw-fasH+0.05;
+    const run=HD/2+1, rise=run*0.5, yR=eaveY+rise, zr=wf-HD/2;
+    const wallM=new THREE.MeshStandardMaterial({color:0xe2ddd4,roughness:0.9,side:THREE.DoubleSide});
+    const shM=new THREE.MeshStandardMaterial({color:0x4b4540,roughness:0.85});
+    const trimM=new THREE.MeshStandardMaterial({color:0xf4f2ee,roughness:0.8});
+    box(HW,HH,HD,0,HH/2,zr,wallM);
+    const Lr=Math.hypot(run,rise)+0.2, pitch=Math.atan2(rise,run);
+    const fr=box(HW+2,0.35,Lr,0,(eaveY+yR)/2+0.17,(fz+zr)/2,shM);fr.rotation.x=pitch;
+    const bz=2*zr-fz;
+    const bk=box(HW+2,0.35,Lr,0,(eaveY+yR)/2+0.17,(bz+zr)/2,shM);bk.rotation.x=-pitch;
+    const tri=new THREE.Shape();tri.moveTo(-HD/2,0);tri.lineTo(HD/2,0);tri.lineTo(0,yR-HH);
+    [-HW/2,HW/2].forEach(x=>{const m=new THREE.Mesh(new THREE.ShapeGeometry(tri),wallM);m.rotation.y=Math.PI/2;m.position.set(x,HH,zr);g.add(m)});
+    box(HW+2,fasH,0.12,0,eaveY-fasH/2,fz-0.06,trimM);
+    box(HW+2,fasH,0.12,0,eaveY-fasH/2,bz+0.06,trimM);
+    box(HW+2,0.08,1,0,HH,wf+0.5,trimM);
+    box(3,7,0.1,-W/4,3.5,wf+0.06,new THREE.MeshStandardMaterial({color:0x6b5848,roughness:0.7}));
+    box(5,3.5,0.1,W/4,5.4,wf+0.06,new THREE.MeshStandardMaterial({color:0x9fb8c6,roughness:0.2,metalness:0.4}));
+    box(W,0.45,0.25,0,hw-0.3,-P/2+0.13,alu);
+  }
+  const n=Math.ceil(W/10)+1, rows=[[P/2-0.4,hf-0.6]];
+  if(free)rows.push([-P/2+0.4,hw-0.6]);
+  rows.forEach(([z,top])=>{
+    for(let i=0;i<n;i++){const x=-W/2+0.4+i*(W-0.8)/(n-1);box(0.28,top+0.3-sb,0.28,x,sb+(top+0.3-sb)/2,z,alu)}
+    box(W+0.6,0.6,0.55,0,top+0.6,z,alu);
+  });
+  /* gutter on the low (front) edge */
+  const gz=P/2+0.25, GW=W+0.8;
+  box(GW,0.05,0.45,0,hf-0.08,gz,alu);
+  box(GW,0.44,0.05,0,hf+0.12,gz+0.2,alu);
+  box(GW,0.3,0.05,0,hf+0.05,gz-0.2,alu);
+  [-GW/2,GW/2].forEach(x=>box(0.05,0.44,0.45,x,hf+0.12,gz,alu));
+  /* downspouts: gutter outlet -> elbow back under the beam to the post -> down the post -> elbow out to a splash block */
+  const nPost=Math.ceil(W/10)+1, splashM=new THREE.MeshStandardMaterial({color:0xbdb8ae,roughness:0.95});
+  dsList(W).forEach(i=>{
+    const x=-W/2+0.4+i*(W-0.8)/(nPost-1);
+    const zd=P/2-0.4+0.14+0.12, yE=hf-0.62, yB=sb+0.42, d=0.22, j=0.27;
+    box(d,(hf-0.1)-yE,d,x,((hf-0.1)+yE)/2,gz,alu);
+    box(j,j,j,x,yE,gz,alu);
+    box(d,d,gz-zd,x,yE,(gz+zd)/2,alu);
+    box(j,j,j,x,yE,zd,alu);
+    box(d,yE-yB,d,x,(yE+yB)/2,zd,alu);
+    box(j,j,j,x,yB,zd,alu);
+    box(d,d,0.9,x,yB,zd+0.45,alu);
+    box(0.24,0.18,0.24,x,yB-0.06,zd+0.95,alu);
+    box(0.95,0.12,1.7,x,sb+0.06,zd+1.55,splashM);
+  });
+  const rise=hw-hf, L=Math.sqrt(P*P+rise*rise), a=Math.atan2(rise,P);
+  const roof=new THREE.Group();roof.position.set(0,(hw+hf)/2+0.32,0);roof.rotation.x=a;g.add(roof);
+  const t=insul?0.28:0.05;
+  box(W+0.8,t,L+0.5,0,0,0,alu,roof);
+  if(S.roof==="wpan"){for(let x=-W/2;x<=W/2+0.01;x+=1)box(0.28,0.2,L+0.5,x,t/2+0.1,0,alu,roof)}
+  if(S.roof==="flat"){for(let x=-W/2;x<=W/2+0.01;x+=1)box(0.06,0.12,L+0.5,x,t/2+0.06,0,alu,roof)}
+  if(insul)box(W+0.9,0.36,0.08,0,0,(L+0.5)/2,alu,roof);
+  /* fascia cover on both rake (sloped side) edges */
+  /* top of the fascia sits flush with the underside of the pan, hanging down below it */
+  const rh=0.5, ry=-t/2-rh/2;
+  [-(W+0.8)/2+0.04,(W+0.8)/2-0.04].forEach(x=>box(0.08,rh,L+0.5,x,ry,0,alu,roof));
+  T.fans=[];
+  if(S.fans>0){
+    /* beams run perpendicular to the longest side, spaced along it, one fan centered on each */
+    const yAt=z=>(hw+hf)/2-(z/P)*(hw-hf)-0.15;
+    const longW=W>=P, nb=S.fans;
+    const dark=new THREE.MeshStandardMaterial({color:0x2b2825,roughness:0.35,metalness:0.6});
+    const wood=new THREE.MeshStandardMaterial({color:0x7a5536,roughness:0.6});
+    const glow=new THREE.MeshStandardMaterial({color:0xfff8e8,emissive:0xffe2a8,emissiveIntensity:0.9,transparent:true,opacity:0.92});
+    const cyl=(r1,r2,h,m,x,y,z)=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,24),m);o.position.set(x,y,z);g.add(o);return o};
+    for(let i=0;i<nb;i++){
+      let x=0,z=0;
+      if(longW){x=-W/2+W*(i+0.5)/nb;box(0.4,0.55,L+0.2,x,yAt(0),0,alu).rotation.x=a}
+      else{z=-P/2+P*(i+0.5)/nb;box(W+0.4,0.55,0.4,0,yAt(z),z,alu)}
+      const by=yAt(z);
+      const top=by-0.28;
+      cyl(0.28,0.22,0.16,dark,x,top-0.08,z);
+      cyl(0.045,0.045,0.9,dark,x,top-0.6,z);
+      cyl(0.36,0.46,0.22,dark,x,top-1.15,z);
+      cyl(0.48,0.48,0.12,dark,x,top-1.32,z);
+      cyl(0.46,0.3,0.18,dark,x,top-1.47,z);
+      const bulb=new THREE.Mesh(new THREE.SphereGeometry(0.32,24,14,0,Math.PI*2,Math.PI/2,Math.PI/2),glow);bulb.position.set(x,top-1.55,z);g.add(bulb);
+      const lamp=new THREE.PointLight(0xffd9a0,0.55,14,2);lamp.position.set(x,top-1.9,z);g.add(lamp);
+      const blades=new THREE.Group();blades.position.set(x,top-1.32,z);g.add(blades);
+      for(let k=0;k<5;k++){
+        const arm=new THREE.Group();arm.rotation.y=k*Math.PI*2/5;
+        const iron=new THREE.Mesh(new THREE.BoxGeometry(0.55,0.05,0.12),dark);iron.position.x=0.7;arm.add(iron);
+        const shape=new THREE.Shape();shape.moveTo(0,-0.2);shape.lineTo(2.1,-0.28);shape.quadraticCurveTo(2.35,0,2.1,0.28);shape.lineTo(0,0.2);shape.lineTo(0,-0.2);
+        const bl=new THREE.Mesh(new THREE.ExtrudeGeometry(shape,{depth:0.04,bevelEnabled:false}),wood);
+        bl.rotation.x=-Math.PI/2+0.14;bl.position.set(0.85,0.02,0);arm.add(bl);
+        blades.add(arm);
+      }
+      T.fans.push(blades);
+    }
+  }
+  T.dims={W,P,hw,hf};
+  const key=W+"x"+P;if(T.key!==key){T.key=key;setView(T.view||"out")}
+}
+let q3d=false;
+function schedule3d(c){if(q3d)return;q3d=true;requestAnimationFrame(()=>{q3d=false;build3d(c)})}
+
+function scope(c){
+  const roofName={wpan:"W-pan aluminum roof",flat:"Flat pan aluminum roof",insul:'3" insulated aluminum roof'}[S.roof];
+  const inc=[
+    `${c.p}' × ${c.w}' ${roofName}, ${S.color}`,
+    c.free?"Freestanding frame with front and rear beams":"Attached to the house fascia board with a flashed header",
+    `${c.posts} aluminum posts anchored to the ${S.base==="new"?"new":"existing"} slab`,
+    ...(S.base==="new"?[`New 4" concrete slab, ${c.p}' × ${c.w}'`]:[]),
+    "Fascia cover trim on both sloped sides",
+    "Front gutter with "+(()=>{const d=dsList(c.w);return d.length+" downspout"+(d.length>1?"s":"")+" ("+d.map(i=>postName(i,Math.ceil(c.w/10)+1)).join(", ").toLowerCase()+") with splash blocks"})(),
+    ...(S.fans?[`${S.fans} fan beam${S.fans>1?"s":""}`]:[]),
+    "All materials and delivery","Professional installation and cleanup"
+  ];
+  const exc=[
+    "Building permit and fees (by homeowner)",
+    ...(S.fans?["Ceiling fans, lights and electrical wiring"]:["Fan beams, ceiling fans, lights and wiring"]),
+    ...(S.base==="new"?[]:["New concrete, slab repair or leveling"]),
+    "Removal of an existing cover or structure",
+    "HOA or architectural approvals"
+  ];
+  return {inc,exc};
+}
+function postName(i,n){return i===0?"Left end":i===n-1?"Right end":"Post "+(i+1)}
+function dsList(w){
+  const n=Math.ceil(w/10)+1;
+  let l=(S.ds||[]).map(v=>v==="R"?n-1:v).filter(i=>i>=0&&i<n);
+  if(!l.length)l=[n-1];
+  return [...new Set(l)].sort((a,b)=>a-b);
+}
+function renderDsPick(c){
+  const n=Math.ceil(c.w/10)+1, on=dsList(c.w);
+  $("dsPick").innerHTML=Array.from({length:n},(_,i)=>`<button type="button" class="chip" data-i="${i}" aria-pressed="${on.includes(i)}">${postName(i,n)}</button>`).join("");
+  $("dsPick").querySelectorAll(".chip").forEach(b=>b.addEventListener("click",()=>{
+    const i=+b.dataset.i;let l=dsList(c.w);
+    if(l.includes(i)){if(l.length>1)l=l.filter(x=>x!==i)}else l.push(i);
+    S.ds=l;render();
+  }));
+}
+/* Financing estimates. Average APRs by credit range: Credible, home-improvement personal loans closed Oct 2025 to Sep 2026 (page updated Oct 5, 2026). */
+const TIERS=[["exc","Excellent 800+",9.29],["vg","Very good 740–799",12.68],["good","Good 670–739",21.20],["fair","Fair 580–669",28.95]];
+const TERMS=[12,24,36,60,84,120];
+const tierOf=()=>TIERS.find(t=>t[0]===S.tier)||TIERS[1];
+function pmt(A,apr,n){const r=apr/100/12;return r?A*r/(1-Math.pow(1+r,-n)):A/n}
+function finLine(c){const t=tierOf(),m=pmt(c.sell,t[2],S.term);return `Financing estimate: ${money(m)}/mo for ${S.term} months at ${t[2].toFixed(2)}% APR (${t[1]} credit). Subject to credit approval; actual rate and terms set by the lender.`}
+function renderFin(c0){
+  const c={...c0,sell:S.sized?c0.sell:0};
+  const t=tierOf();
+  $("tierPick").innerHTML=TIERS.map(([k,n])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${k===S.tier}">${n}</button>`).join("");
+  $("tierPick").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{S.tier=b.dataset.k;render()});
+  $("termPick").innerHTML=TERMS.map(n=>`<button type="button" class="term" data-n="${n}" aria-pressed="${n===S.term}"><em>${n} months</em><b>${money(pmt(c.sell,t[2],n))}</b><span>per month</span></button>`).join("");
+  $("termPick").querySelectorAll(".term").forEach(b=>b.onclick=()=>{S.term=+b.dataset.n;render()});
+  const m=pmt(c.sell,t[2],S.term), tot=m*S.term;
+  if(!S.sized){$("finNote").textContent="Choose a size above to see monthly payments.";$("finBtn").textContent="Financing";return}
+  $("finNote").textContent=`Estimates only. Payments use ${t[2].toFixed(2)}% APR, the recent average for borrowers with ${t[1].toLowerCase()} credit on home improvement loans. Example: ${money(c.sell)} financed for ${S.term} months at ${t[2].toFixed(2)}% APR is about ${money(m)} a month, ${money(tot)} total of payments. Financing is subject to credit approval through a third-party lender, and your actual rate, term and payment may differ.`;
+  $("finBtn").textContent=`or est. ${money(m)}/mo · Financing`;
+}
+function render(){
+  const c=calc();
+  syncPicker();
+  renderDsPick(c);
+  renderFin(c);
+  drawPlan(c);
+  schedule3d(c);
+  $("hdrSell").textContent=money(S.sized?c.sell:0);
+  $("hdrMeta").textContent=S.sized?`${c.p}' × ${c.w}' · ${money(c.sell/c.sf)}/sf`:"Pick a size";
+  const roofName={wpan:"W-pan aluminum roof",flat:"Flat pan aluminum roof",insul:'3" insulated aluminum roof'}[S.roof];
+  const sc=scope(c);
+  $("incl").innerHTML=`<tr class="grp"><td>Included</td></tr>`+sc.inc.map(r=>`<tr><td><span class="mk yes">✓</span>${r}</td></tr>`).join("")
+    +`<tr class="grp"><td>Not included</td></tr>`+sc.exc.map(r=>`<tr><td><span class="mk no">✕</span>${r}</td></tr>`).join("");
+    return c;
+}
+
+
+function seg(id,key){
+  $(id).querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>{
+    S[key]=key==="fans"?+b.dataset.v:b.dataset.v;$(id).querySelectorAll(".opt").forEach(x=>x.setAttribute("aria-pressed",x===b));render()}));
+}
+seg("roof","roof");seg("mount","mount");seg("base","base");
+$("color").innerHTML=COLORS.map(([n,h])=>`<button class="sw" data-c="${n}" aria-pressed="${n===S.color}"><i style="background:${h}"></i>${n}</button>`).join("");
+$("color").querySelectorAll(".sw").forEach(b=>b.addEventListener("click",()=>{S.color=b.dataset.c;$("color").querySelectorAll(".sw").forEach(x=>x.setAttribute("aria-pressed",x===b));render()}));
+seg("fans","fans");
+
+(function(){let g="";for(let i=1;i<14;i++){const xb=60+i*20,xf=20+i*360/14;g+=`<path d="M${xb} 82L${xf.toFixed(1)} 150"/>`}document.getElementById("ghostRibs").innerHTML=g})();
+init3d();
+document.querySelectorAll("#views .opt").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.v)));
+buildList("listP","p",8,24);buildList("listW","w",10,40);
+$("sizeBtn").onclick=()=>togglePicker($("picker").hidden);
+$("sizeDone").onclick=()=>{togglePicker(false);$("sizeBtn").focus()};
+
+/* Install calendar: the first week out can't be picked; the next 2 weeks show open and booked days.
+   BOOKED = days already scheduled (YYYY-MM-DD). Sample days for preview until the schedule is connected. */
+let BOOKED=["2026-10-20","2026-10-22","2026-10-27","2026-10-30"];const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+function buildCal(){
+  const t0=new Date();t0.setHours(12,0,0,0);
+  const days=[];for(let i=0;i<21;i++){const d=new Date(t0);d.setDate(t0.getDate()+i);days.push(d)}
+  let h="";for(let k=0;k<t0.getDay();k++)h+=`<span class="cal-pad"></span>`;
+  days.forEach((d,i)=>{
+    const id=iso(d), soon=i<7, booked=BOOKED.includes(id);
+    const st=soon?"soon":booked?"book":"open";
+    const mo=d.getDate()===1||i===0?d.toLocaleDateString("en-US",{month:"short"})+" ":"";
+    h+=`<button type="button" class="day ${st}" data-d="${id}" ${st!=="open"?"disabled":""} role="radio" aria-checked="false" aria-label="${d.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}${booked&&!soon?", booked":soon?", too soon":""}"><b>${mo}${d.getDate()}</b>${booked&&!soon?"<em>Booked</em>":""}</button>`;
+  });
+  $("dayPick").innerHTML=h;
+  $("dayPick").querySelectorAll(".day.open").forEach(b=>b.onclick=()=>pickDay(b.dataset.d));
+  const cur=$("cdate").value;
+  if(cur&&!$("dayPick").querySelector(`.day.book[data-d="${cur}"]`))pickDay(cur);
+  else{const first=$("dayPick").querySelector(".day.open");if(first)pickDay(first.dataset.d)}
+}
+function pickDay(id){
+  $("cdate").value=id;
+  $("dayPick").querySelectorAll(".day").forEach(b=>{const on=b.dataset.d===id;b.classList.toggle("sel",on);b.setAttribute("aria-checked",on)});
+}
+buildCal();
+$("book").addEventListener("submit",e=>{
+  e.preventDefault();
+  if(!S.sized){togglePicker(true);$("sizeBtn").scrollIntoView({behavior:"smooth",block:"center"});$("sizeChg").textContent="Pick a size first";return}
+  const c=render();const sc=scope(c);
+  const roof={wpan:"W-Pan",flat:"Flat Pan",insul:'3" Insulated'}[S.roof];
+  $("quoteOut").hidden=false;
+  const calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  requestAnimationFrame(()=>$("viewPdf").scrollIntoView({behavior:calm?"auto":"smooth",block:"center"}));
+});
+const fullAddr=()=>`${$("caddr").value}, ${$("ccity").value}, ${$("cstate").value.toUpperCase()} ${$("czip").value}`;
+const esc=t=>String(t).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+function fmtDate(d){return d.toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"})}
+function buildSheet(){
+  const c=calc(), sc=scope(c), now=new Date(), until=new Date(now.getTime()+30*864e5);
+  const qn="GC-PC-"+now.toISOString().slice(2,10).replace(/-/g,"");
+  const roof={wpan:"W-Pan",flat:"Flat Pan",insul:'3" Insulated'}[S.roof];
+  const dsN=dsList(c.w).length;
+  const inst=$("cdate").value?fmtDate(new Date($("cdate").value+"T12:00")):"To be scheduled";
+  $("sheet").innerHTML=`
+  <div class="sh-top">
+    <div><div class="sh-co">GILCO CONSTRUCTION</div><div class="sh-sub">ALUMINUM PATIO COVERS</div><div style="font-size:11px;color:#5d6872;margin-top:4px">sbgilco@gmail.com</div></div>
+    <div class="sh-q"><b>QUOTE</b><span>Quote # ${qn}</span><span>Date ${fmtDate(now)}</span><span>Valid until ${fmtDate(until)}</span></div>
+  </div>
+  <div class="sh-two">
+    <div><div class="sh-lbl">Prepared for</div>${esc($("cname").value)}<br>${esc($("cphone").value)}<br>${esc($("cemail").value)}</div>
+    <div><div class="sh-lbl">Project site</div>${esc($("caddr").value)}<br>${esc(`${$("ccity").value}, ${$("cstate").value.toUpperCase()} ${$("czip").value}`)}<br>Requested install: ${inst}</div>
+  </div>
+  <div class="sh-sum">
+    <div><h3>${c.p}' × ${c.w}' ${c.free?"Freestanding":"Attached"} Aluminum Patio Cover</h3>
+    <p>${roof} roof · ${S.color} · ${c.posts} posts on ${S.base==="new"?"new":"existing"} slab · ${dsN} downspout${dsN>1?"s":""}${S.fans?` · ${S.fans} fan beam${S.fans>1?"s":""}`:""}</p>
+    <p>${c.sf} sq ft covered${c.free?"":" · Attached at the house fascia"}</p></div>
+    ${$("plan").outerHTML.replace('id="plan"','')}
+  </div>
+  <div class="sh-lbl">Included</div><ul>${sc.inc.map(x=>`<li class="y"><i>✓</i>${esc(x)}</li>`).join("")}</ul>
+  <div class="sh-lbl">Not included</div><ul>${sc.exc.map(x=>`<li class="n"><i>✕</i>${esc(x)}</li>`).join("")}</ul>
+  <div class="sh-price"><div><div style="font-size:10px;font-weight:700;letter-spacing:.1em">TOTAL INSTALLED PRICE</div><small>${c.sf} sq ft · ${money(c.sell/c.sf)} per sq ft · Price confirmed at site visit</small></div><b>${money(c.sell)}</b></div>
+  <div style="font-size:10.5px;color:#5d6872;margin-top:6px">${esc(finLine(c))}</div>
+  <div class="sh-lbl">Terms</div>
+  <ul><li>• 50% deposit at signing to order materials. Balance due on completion.</li>
+  <li>• Final price is confirmed after a site visit, before any materials are ordered.</li>
+  <li>• Install date is scheduled once materials arrive and is subject to weather.</li>
+  <li>• This quote is valid for 30 days from the date above.</li></ul>
+  <div class="sh-lbl">Acceptance</div>
+  <div class="sh-sign"><div>Customer signature</div><div>Date</div><div>Gilco Construction</div><div>Date</div></div>
+  <div class="sh-foot"><span>Gilco Construction · Aluminum Patio Covers</span><span>Quote ${qn} · Page 1 of 1</span></div>`;
+}
+function fitSheet(){
+  const avail=Math.min(816,document.documentElement.clientWidth-24), k=avail/816;
+  $("sheet").style.transform=`scale(${k})`;
+  $("sheetWrap").style.width=816*k+"px";$("sheetWrap").style.height=$("sheet").offsetHeight*k+"px";
+}
+window.addEventListener("resize",()=>{if(!$("pdfView").hidden)fitSheet()});
+$("viewPdf").onclick=()=>{$("sheetTitle").textContent="Quote preview";buildSheet();$("pdfView").hidden=false;fitSheet();$("pdfView").scrollTop=0;$("closePdf").focus()};
+$("closePdf").onclick=()=>{$("pdfView").hidden=true;$("viewPdf").focus()};
+$("pdfView").addEventListener("click",e=>{if(e.target===$("pdfView"))$("pdfView").hidden=true});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("pdfView").hidden)$("pdfView").hidden=true});
+$("finBtn").onclick=()=>{$("finPanel").scrollIntoView({behavior:"smooth",block:"start"})};
+
+render();
+</script>
+
+</body></html>
