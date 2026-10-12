@@ -63,7 +63,7 @@ textarea:focus-visible,.btn:focus-visible,input:focus-visible{outline:2px solid 
 </style>
 </head><body>
 <div class="wrap">
-  <header><div class="brand">Gilco Construction<small>Trade Partner</small></div><div class="who" id="who"></div></header>
+  <header><div class="brand">Gilco Home Services, LLC<small>Trade Partner</small></div><div class="who" id="who"></div></header>
   <main id="app" class="wrap" style="padding:0"><p class="loading">Loading your job…</p></main>
 </div>
 <script src="photos.js?v=7"></script>
@@ -94,13 +94,13 @@ function render(){
   clearInterval(TIMER);
   const v=V||{};$("who").textContent=v.partner?v.partner:"";
   const st=v.state;
-  if(st==="not_found")return shell(`<section class="panel"><h2>Link not found</h2><p class="note">This job link isn't valid. Call Gilco Construction for a new one.</p></section>`);
+  if(st==="not_found")return shell(`<section class="panel"><h2>Link not found</h2><p class="note">This job link isn't valid. Call Gilco Home Services, LLC for a new one.</p></section>`);
   if(st==="taken")return shell(`<section class="panel"><h2>Job already taken</h2><p class="note">This job went to another installer. Thanks for looking — more are coming.</p></section>`);
   if(st==="expired")return shell(`<section class="panel"><h2>Offer expired</h2><p class="note">The time to answer this offer ran out, so it moved to the next installer.</p></section>`);
   if(st==="declined")return shell(`<section class="panel"><h2>You passed on this job</h2><p class="note">No problem. We'll send the next one your way.</p></section>`);
   if(st==="offer")return renderOffer(v);
   if(st==="accepted")return renderJob(v);
-  shell(`<section class="panel"><h2>Offer closed</h2><p class="note">This offer isn't open anymore. Call Gilco Construction with any questions.</p></section>`);
+  shell(`<section class="panel"><h2>Offer closed</h2><p class="note">This offer isn't open anymore. Call Gilco Home Services, LLC with any questions.</p></section>`);
 }
 function renderOffer(v){
   shell(`<section class="panel">

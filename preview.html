@@ -192,7 +192,7 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
 </svg>
 <div class="wrap">
   <header>
-    <div class="brand">Gilco Construction<small>Aluminum Patio Covers</small></div>
+    <div class="brand">Gilco Home Services, LLC<small>Aluminum Patio Covers</small></div>
     <div class="hdrprice" aria-live="polite"><span class="hp-l">Your price</span><b id="hdrSell">$0</b><span class="hp-m" id="hdrMeta"></span><button class="finbtn" id="finBtn" type="button">Financing</button></div>
   </header>
 
@@ -714,7 +714,7 @@ function buildSheet(){
   const inst=$("cdate").value?fmtDate(new Date($("cdate").value+"T12:00")):"To be scheduled";
   $("sheet").innerHTML=`
   <div class="sh-top">
-    <div><div class="sh-co">GILCO CONSTRUCTION</div><div class="sh-sub">ALUMINUM PATIO COVERS</div><div style="font-size:11px;color:#5d6872;margin-top:4px">sbgilco@gmail.com</div></div>
+    <div><div class="sh-co">GILCO HOME SERVICES, LLC</div><div class="sh-sub">ALUMINUM PATIO COVERS</div><div style="font-size:11px;color:#5d6872;margin-top:4px">sbgilco@gmail.com</div></div>
     <div class="sh-q"><b>QUOTE</b><span>Quote # ${qn}</span><span>Date ${fmtDate(now)}</span><span>Valid until ${fmtDate(until)}</span></div>
   </div>
   <div class="sh-two">
@@ -737,8 +737,8 @@ function buildSheet(){
   <li>• Install date is scheduled once materials arrive and is subject to weather.</li>
   <li>• This quote is valid for 30 days from the date above.</li></ul>
   <div class="sh-lbl">Acceptance</div>
-  <div class="sh-sign"><div>Customer signature</div><div>Date</div><div>Gilco Construction</div><div>Date</div></div>
-  <div class="sh-foot"><span>Gilco Construction · Aluminum Patio Covers</span><span>Quote ${qn} · Page 1 of 1</span></div>`;
+  <div class="sh-sign"><div>Customer signature</div><div>Date</div><div>Gilco Home Services, LLC</div><div>Date</div></div>
+  <div class="sh-foot"><span>Gilco Home Services, LLC · Aluminum Patio Covers</span><span>Quote ${qn} · Page 1 of 1</span></div>`;
 }
 function fitSheet(){
   const avail=Math.min(816,document.documentElement.clientWidth-24), k=avail/816;

@@ -23,7 +23,7 @@ h1,h2{font-family:var(--display);text-transform:uppercase;letter-spacing:.03em;m
 </style>
 </head><body>
 <div class="wrap">
-  <header><div class="brand">Gilco Construction<small>Aluminum Patio Covers</small></div></header>
+  <header><div class="brand">Gilco Home Services, LLC<small>Aluminum Patio Covers</small></div></header>
   <section class="panel" id="top"><p class="hint">Loading…</p></section>
   <section class="panel" id="box" hidden></section>
   <section class="panel" id="spot" hidden></section>
@@ -32,10 +32,10 @@ h1,h2{font-family:var(--display);text-transform:uppercase;letter-spacing:.03em;m
 <script>
 (async()=>{
   const t=new URLSearchParams(location.search).get("q")||"", top=document.getElementById("top"), box=document.getElementById("box");
-  if(!/^[0-9a-f-]{36}$/i.test(t)){top.innerHTML=`<h1>Link not found</h1><p class="hint">This photo link isn't valid. Call Gilco Construction for a new one.</p>`;return}
+  if(!/^[0-9a-f-]{36}$/i.test(t)){top.innerHTML=`<h1>Link not found</h1><p class="hint">This photo link isn't valid. Call Gilco Home Services, LLC for a new one.</p>`;return}
   try{
     const r=await GilcoPhotos.rpc("pc_quote_get",{p_token:t});
-    if(r.state!=="ok"){top.innerHTML=`<h1>Link not found</h1><p class="hint">This photo link isn't valid. Call Gilco Construction for a new one.</p>`;return}
+    if(r.state!=="ok"){top.innerHTML=`<h1>Link not found</h1><p class="hint">This photo link isn't valid. Call Gilco Home Services, LLC for a new one.</p>`;return}
     top.innerHTML=`<h1>Photos for your patio cover${r.name?", "+r.name.replace(/[<>&"]/g,""):""}</h1>
       <p class="hint">Quote ${r.quote_no}. We need 4 photos of the area where the cover goes, plus 1 of the front of your house so our installer finds the right home.${r.deposit?' Then show us where to leave the materials.':''} Tap a box to take or choose a photo.</p>`;
     box.hidden=false;GilcoPhotos.mount(box,t,r.photos||{},{title:false,showLink:false});

@@ -1,4 +1,4 @@
-# Gilco Construction – Patio Cover Estimator
+# Gilco Home Services, LLC – Patio Cover Estimator
 
 Customer-facing aluminum patio cover estimator. Published with GitHub Pages:
 https://gilcobuild.github.io/patio-cover-estimator/
