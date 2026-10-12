@@ -324,6 +324,16 @@ const RATE_LABELS={
 };
 let R={...DEFAULTS};
 try{const s=JSON.parse(localStorage.getItem("gilcoRates")||"null");if(s)R={...DEFAULTS,...s}}catch(e){}
+/* Supplier price list: extra line items and fees on top of the built-in unit costs (saved centrally; the website loads it) */
+let PB={supplier:{name:"",quote:"",date:""},extras:[],fees:[]};
+const QTY_RULES={sf:["Roof area","sf"],w:["Width along house","lf"],p2:["Both sides (2 × out from house)","lf"],perim:["Both sides + front","lf"],posts:["Number of posts","ea"],ds:["Number of downspouts","ea"],fans:["Number of fan beams","ea"],job:["Once per job","job"]};
+const WHEN={all:"Every job",wpan:"W-pan roof only",flat:"Flat pan roof only",insul:"Insulated roof only",att:"Attached only",free:"Freestanding only",newslab:"New slab only",fans:"With fan beams only"};
+function applyPricebook(v){
+  if(!v||typeof v!=="object")return false;
+  if(v.rates)R={...DEFAULTS,...v.rates};
+  PB={supplier:v.supplier||{name:"",quote:"",date:""},extras:Array.isArray(v.extras)?v.extras:[],fees:Array.isArray(v.fees)?v.fees:[]};
+  return true;
+}
 /* Price gate (customer build): price stays hidden until the customer enters name, email, phone and a service-area address.
    They then see a price range; the exact itemized quote is emailed. The back office always shows exact numbers. */
 let GATE=true;let UNLOCK=false;try{UNLOCK=localStorage.getItem("gilcoUnlocked")==="1"}catch(_){}
@@ -353,6 +363,12 @@ function calc(ow,op){
     L("Fasteners + sealant",sf,"sf",R.fastener_sf)
   ];
   if(S.fans>0)items.push(L("Fan / light beam",S.fans,"ea",R.fanbeam));
+  const qv={sf,w,p2:2*p,perim:2*p+w,posts,ds,fans:S.fans,job:1};
+  const on=k=>({all:true,wpan:S.roof==="wpan",flat:S.roof==="flat",insul,att:!free,free,newslab:S.base==="new",fans:S.fans>0})[k||"all"];
+  (PB.extras||[]).forEach(x=>{if(x&&String(x.name||"").trim()&&on(x.when)){const q=qv[x.rule]??1;if(q>0)items.push(L(x.name,q,(QTY_RULES[x.rule]||["","ea"])[1],+x.cost||0))}});
+  const sub=items.reduce((a,i)=>a+i[2],0);
+  (PB.fees||[]).forEach(f=>{if(!f||!String(f.name||"").trim())return;const a=+f.amt||0;
+    if(f.kind==="pct"){const v=sub*a/100;items.push([f.name,`${a}% of materials`,v,1,"job",v])}else items.push(L(f.name,1,"job",a))});
   const mat=items.reduce((a,i)=>a+i[2],0);
   const labor=Math.max(R.labor_min, sf*(insul?R.labor_insul_sf:R.labor_sf)*(free?1.15:1));
   const cont=(mat+labor)*R.contingency_pct/100;
@@ -739,5 +755,5 @@ $("finBtn").onclick=()=>{$("finPanel").scrollIntoView({behavior:"smooth",block:"
 render();
 </script>
 
-<script src="photos.js?v=6"></script>
+<script src="photos.js?v=7"></script>
 </body></html>

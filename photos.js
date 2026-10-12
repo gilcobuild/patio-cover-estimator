@@ -126,6 +126,8 @@ function showSpot(el,spot){ /* read-only map for the installer */
   return loadLeaflet().then(()=>{const m=satMap(el,[spot.lat,spot.lng],19);L.marker([spot.lat,spot.lng],{icon:pinIcon()}).addTo(m)});
 }
 window.GilcoPhotos={rpc,mount,mountSpot,showSpot,SLOTS};
+/* estimator: load the saved supplier price list so website prices match the back office */
+if(typeof applyPricebook==="function"){rpc("pc_pricebook",{}).then(v=>{try{if(applyPricebook(v))render()}catch(_){}}).catch(()=>{})}
 /* estimator hook: save the quote when "Get my quote" is pressed, then show the photo step */
 const book=document.getElementById("book"), step=document.getElementById("photoStep");
 if(book&&step){
