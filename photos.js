@@ -122,6 +122,7 @@ async function mountSpot(box,token,addr,spot){
   };
 }
 function showSpot(el,spot){ /* read-only map for the installer */
+  addCss();
   return loadLeaflet().then(()=>{const m=satMap(el,[spot.lat,spot.lng],19);L.marker([spot.lat,spot.lng],{icon:pinIcon()}).addTo(m)});
 }
 window.GilcoPhotos={rpc,mount,mountSpot,showSpot,SLOTS};
