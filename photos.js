@@ -128,6 +128,11 @@ function showSpot(el,spot){ /* read-only map for the installer */
 window.GilcoPhotos={rpc,mount,mountSpot,showSpot,SLOTS};
 /* estimator: load the saved supplier price list so website prices match the back office */
 if(typeof applyPricebook==="function"){rpc("pc_pricebook",{}).then(v=>{try{if(applyPricebook(v))render()}catch(_){}}).catch(()=>{})}
+/* estimator: capture the email lead as soon as it's entered at the top */
+document.addEventListener("gilco:email",async e=>{
+  try{const em=(e.detail&&e.detail.email)||"";if(!em)return;let tok=null;try{tok=localStorage.getItem("gilcoQuoteToken")}catch(_){}
+    const r=await rpc("pc_quote_save",{p_token:tok,p:{cust:{email:em}}});try{localStorage.setItem("gilcoQuoteToken",r.token)}catch(_){}}catch(_){}
+});
 /* estimator hook: save the quote when "Get my quote" is pressed, then show the photo step */
 const book=document.getElementById("book"), step=document.getElementById("photoStep");
 if(book&&step){

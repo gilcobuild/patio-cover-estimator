@@ -30,6 +30,7 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;f
 header .brand{flex:1 1 0;min-width:0}
 .hdrprice .hp-l{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .hdrprice b{font-family:var(--display);font-weight:700;font-size:32px;color:var(--price);font-variant-numeric:tabular-nums;transition:color .2s}
+.egate{border:2px solid var(--bronze);background:var(--bronze-soft)}.eg-row{display:flex;gap:8px;flex-wrap:wrap}.eg-row input{flex:1 1 200px}.eg-row .btn{flex:0 0 auto}
 .hdrprice b.rng{font-size:24px}.hdrprice b.ask{font-size:22px;color:var(--bronze)}
 @media (max-width:420px){.hdrprice b.rng{font-size:20px}.hdrprice b.ask{font-size:18px}}
 .hdrprice .hp-m{font-family:var(--mono);font-size:11px;color:var(--muted)}
@@ -196,6 +197,16 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
     <div class="hdrprice" aria-live="polite"><span class="hp-l">Your price</span><b id="hdrSell">$0</b><span class="hp-m" id="hdrMeta"></span><button class="finbtn" id="finBtn" type="button">Financing</button></div>
   </header>
 
+  <section class="panel egate" id="emailGate" hidden>
+    <h2>Get your instant price</h2>
+    <p class="hint">Enter your email and every option you pick below shows your exact price and monthly payment, right away. No salesman visit needed.</p>
+    <form id="egForm" class="eg-row" novalidate>
+      <input id="egEmail" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" aria-label="Your email" required>
+      <button class="btn" type="submit">See my price</button>
+    </form>
+    <p class="fine" id="egMsg" aria-live="polite">We'll only use it to send your quote. No spam.</p>
+  </section>
+
   <section class="panel">
     <h2>1. Pick your size</h2>
     <p class="hint">Out from the house: 8' to 24'. Width along the house: 10' to 40'. Both in 2-foot steps.</p>
@@ -338,6 +349,13 @@ function applyPricebook(v){
    They then see a price range; the exact itemized quote is emailed. The back office always shows exact numbers. */
 let GATE=true;let UNLOCK=false;try{UNLOCK=localStorage.getItem("gilcoUnlocked")==="1"}catch(_){}
 const SERVICE_ZIP=/^70[01]\d\d$/;
+const EMAIL_OK=e=>/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(e||"");
+function unlockWith(email){
+  UNLOCK=true;try{localStorage.setItem("gilcoUnlocked","1");localStorage.setItem("gilcoEmail",email)}catch(_){}
+  const g=document.getElementById("emailGate");if(g)g.hidden=true;
+  const ce=document.getElementById("cemail");if(ce&&!ce.value)ce.value=email;
+  try{document.dispatchEvent(new CustomEvent("gilco:email",{detail:{email}}))}catch(_){}
+}
 function priceRange(v){const lo=Math.floor(v*0.92/250)*250,hi=Math.ceil(v*1.08/250)*250;return [lo,hi]}
 const rangeTxt=v=>{const [a,b]=priceRange(v);return money(a)+"–"+money(b)};
 const S={sized:false,roof:"wpan",mount:"att",color:"White",fans:0,base:"have",ds:["R"],tier:"vg",term:60};
@@ -616,8 +634,8 @@ const tierOf=()=>TIERS.find(t=>t[0]===S.tier)||TIERS[1];
 function pmt(A,apr,n){const r=apr/100/12;return r?A*r/(1-Math.pow(1+r,-n)):A/n}
 function finLine(c){const t=tierOf(),m=pmt(c.sell,t[2],S.term);return `Financing estimate: ${money(m)}/mo for ${S.term} months at ${t[2].toFixed(2)}% APR (${t[1]} credit). Subject to credit approval; actual rate and terms set by the lender.`}
 function renderFin(c0){
-  const hide=GATE&&!UNLOCK, est=GATE&&UNLOCK;
-  const c={...c0,sell:S.sized&&!hide?(est?(priceRange(c0.sell)[0]+priceRange(c0.sell)[1])/2:c0.sell):0};
+  const hide=GATE&&!UNLOCK, est=false;
+  const c={...c0,sell:S.sized&&!hide?c0.sell:0};
   const t=tierOf();
   $("tierPick").innerHTML=TIERS.map(([k,n])=>`<button type="button" class="chip" data-k="${k}" aria-pressed="${k===S.tier}">${n}</button>`).join("");
   $("tierPick").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{S.tier=b.dataset.k;render()});
@@ -625,7 +643,7 @@ function renderFin(c0){
   $("termPick").querySelectorAll(".term").forEach(b=>b.onclick=()=>{S.term=+b.dataset.n;render()});
   const m=pmt(c.sell,t[2],S.term), tot=m*S.term;
   if(!S.sized){$("finNote").textContent="Choose a size above to see monthly payments.";$("finBtn").textContent="Financing";return}
-  if(hide){$("termPick").querySelectorAll(".term b").forEach(b=>b.textContent="$—");$("finNote").textContent="Your monthly payments show after you get your free quote in step 4 below.";$("finBtn").textContent="Financing";return}
+  if(hide){$("termPick").querySelectorAll(".term b").forEach(b=>b.textContent="$—");$("finNote").textContent="Enter your email at the top to see your monthly payments.";$("finBtn").textContent="Financing";return}
   $("finNote").textContent=`${est?"Based on the middle of your price range. ":""}Estimates only. Payments use ${t[2].toFixed(2)}% APR, the recent average for borrowers with ${t[1].toLowerCase()} credit on home improvement loans. Example: ${money(c.sell)} financed for ${S.term} months at ${t[2].toFixed(2)}% APR is about ${money(m)} a month, ${money(tot)} total of payments. Financing is subject to credit approval through a third-party lender, and your actual rate, term and payment may differ.`;
   $("finBtn").textContent=`or est. ${money(m)}/mo · Financing`;
 }
@@ -638,8 +656,7 @@ function render(){
   schedule3d(c);
   const hs=$("hdrSell");hs.className="";
   if(!S.sized){hs.textContent=money(0);$("hdrMeta").textContent="Pick a size"}
-  else if(GATE&&!UNLOCK){hs.textContent="Free quote";hs.className="ask";$("hdrMeta").textContent=`${c.p}' × ${c.w}' · price in step 4`}
-  else if(GATE){hs.textContent=rangeTxt(c.sell);hs.className="rng";$("hdrMeta").textContent=`${c.p}' × ${c.w}' · price range`}
+  else if(GATE&&!UNLOCK){hs.textContent="See price";hs.className="ask";$("hdrMeta").textContent=`${c.p}' × ${c.w}' · enter email above`}
   else{hs.textContent=money(c.sell);$("hdrMeta").textContent=`${c.p}' × ${c.w}' · ${money(c.sell/c.sf)}/sf`}
   const roofName={wpan:"W-pan aluminum roof",flat:"Flat pan aluminum roof",insul:'3" insulated aluminum roof'}[S.roof];
   const sc=scope(c);
@@ -695,11 +712,11 @@ $("book").addEventListener("submit",e=>{
   if(GATE&&!SERVICE_ZIP.test($("czip").value.trim())){$("quoteOut").hidden=false;$("pdfBtns").hidden=true;
     $("quoteFlag").innerHTML="We currently install in the greater New Orleans area (ZIP codes starting 700 or 701). Check your ZIP code, or call us and we'll see if we can help.";
     $("czip").focus();return}
-  if(GATE){UNLOCK=true;try{localStorage.setItem("gilcoUnlocked","1")}catch(_){}}
+  if(GATE&&!UNLOCK){unlockWith($("cemail").value.trim())}
   const c=render();const sc=scope(c);
   const roof={wpan:"W-Pan",flat:"Flat Pan",insul:'3" Insulated'}[S.roof];
   $("quoteOut").hidden=false;$("pdfBtns").hidden=false;
-  $("quoteFlag").innerHTML=GATE?`<b>Your price range: ${rangeTxt(c.sell)}</b><br>Your exact, itemized quote for this ${c.p}' × ${c.w}' cover is being emailed to <b>${esc($("cemail").value.trim())}</b>. The final price is confirmed at a quick site visit before anything is ordered.`:"Your quote is ready.";
+  $("quoteFlag").innerHTML=`<b>Your quote is ready: ${money(c.sell)}</b> for a ${c.p}' × ${c.w}' cover. Tap View PDF quote to see the full quote. The final price is confirmed at a quick site visit before anything is ordered.`;
   const calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
   requestAnimationFrame(()=>$("viewPdf").scrollIntoView({behavior:calm?"auto":"smooth",block:"center"}));
 });
@@ -729,8 +746,8 @@ function buildSheet(){
   </div>
   <div class="sh-lbl">Included</div><ul>${sc.inc.map(x=>`<li class="y"><i>✓</i>${esc(x)}</li>`).join("")}</ul>
   <div class="sh-lbl">Not included</div><ul>${sc.exc.map(x=>`<li class="n"><i>✕</i>${esc(x)}</li>`).join("")}</ul>
-  <div class="sh-price"><div><div style="font-size:10px;font-weight:700;letter-spacing:.1em">${GATE?"ESTIMATED PRICE RANGE":"TOTAL INSTALLED PRICE"}</div><small>${c.sf} sq ft · ${GATE?"Exact itemized price sent to your email":money(c.sell/c.sf)+" per sq ft"} · Price confirmed at site visit</small></div><b${GATE?' style="font-size:26px"':""}>${GATE?rangeTxt(c.sell):money(c.sell)}</b></div>
-  <div style="font-size:10.5px;color:#5d6872;margin-top:6px">${esc(finLine(GATE?{...c,sell:(priceRange(c.sell)[0]+priceRange(c.sell)[1])/2}:c))}</div>
+  <div class="sh-price"><div><div style="font-size:10px;font-weight:700;letter-spacing:.1em">TOTAL INSTALLED PRICE</div><small>${c.sf} sq ft · ${money(c.sell/c.sf)} per sq ft · Price confirmed at site visit</small></div><b>${money(c.sell)}</b></div>
+  <div style="font-size:10.5px;color:#5d6872;margin-top:6px">${esc(finLine(c))}</div>
   <div class="sh-lbl">Terms</div>
   <ul><li>• 50% deposit at signing to order materials. Balance due on completion.</li>
   <li>• Final price is confirmed after a site visit, before any materials are ordered.</li>
@@ -746,6 +763,14 @@ function fitSheet(){
   $("sheetWrap").style.width=816*k+"px";$("sheetWrap").style.height=$("sheet").offsetHeight*k+"px";
 }
 window.addEventListener("resize",()=>{if(!$("pdfView").hidden)fitSheet()});
+if(GATE){
+  try{const em=localStorage.getItem("gilcoEmail");if(em&&!$("cemail").value)$("cemail").value=em}catch(_){}
+  $("emailGate").hidden=UNLOCK;
+  $("egForm").addEventListener("submit",e=>{e.preventDefault();const em=$("egEmail").value.trim();
+    if(!EMAIL_OK(em)){$("egMsg").textContent="Please enter a valid email address.";$("egEmail").focus();return}
+    unlockWith(em);render();$("hdrSell").animate&&$("hdrSell").animate([{transform:"scale(1.15)"},{transform:"scale(1)"}],{duration:350});
+    if(!S.sized){togglePicker(true);$("sizeBtn").scrollIntoView({behavior:"smooth",block:"center"})}});
+}
 $("viewPdf").onclick=()=>{$("sheetTitle").textContent="Quote preview";buildSheet();$("pdfView").hidden=false;fitSheet();$("pdfView").scrollTop=0;$("closePdf").focus()};
 $("closePdf").onclick=()=>{$("pdfView").hidden=true;$("viewPdf").focus()};
 $("pdfView").addEventListener("click",e=>{if(e.target===$("pdfView"))$("pdfView").hidden=true});
@@ -755,5 +780,5 @@ $("finBtn").onclick=()=>{$("finPanel").scrollIntoView({behavior:"smooth",block:"
 render();
 </script>
 
-<script src="photos.js?v=7"></script>
+<script src="photos.js?v=8"></script>
 </body></html>
