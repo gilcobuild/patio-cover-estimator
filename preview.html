@@ -428,7 +428,9 @@ function syncPicker(){
   if(!S.sized&&$("picker").hidden)$("sizeChg").textContent="Choose size ▾";
 }
 function scrollToSel(){
-  ["listP","listW"].forEach(id=>{const s=$(id).querySelector('[aria-selected="true"]');if(s)$(id).scrollTop=s.offsetTop-$(id).clientHeight/2+s.offsetHeight/2});
+  /* lists open at the top (smallest sizes first); only scroll if the picked size would be hidden below */
+  ["listP","listW"].forEach(id=>{const L=$(id);L.scrollTop=0;const s=S.sized&&L.querySelector('[aria-selected="true"]');
+    if(s&&s.offsetTop+s.offsetHeight>L.clientHeight)L.scrollTop=s.offsetTop+s.offsetHeight-L.clientHeight+6});
 }
 function togglePicker(open){
   $("picker").hidden=!open;$("sizeBtn").setAttribute("aria-expanded",open);
