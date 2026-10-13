@@ -422,7 +422,7 @@ function buildList(id,input,start,max){
 }
 function syncPicker(){
   [["listP","p"],["listW","w"]].forEach(([id,inp])=>{
-    $(id).querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===$(inp).value));
+    $(id).querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",S.sized&&b.dataset.v===$(inp).value));
   });
   $("sizeLabel").textContent=S.sized?`${$("p").value}' × ${$("w").value}'`:"–' × –'";
   if(!S.sized&&$("picker").hidden)$("sizeChg").textContent="Choose size ▾";
