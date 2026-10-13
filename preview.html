@@ -698,10 +698,10 @@ $("book").addEventListener("submit",e=>{
   if(GATE){UNLOCK=true;try{localStorage.setItem("gilcoUnlocked","1")}catch(_){}}
   const c=render();const sc=scope(c);
   const roof={wpan:"W-Pan",flat:"Flat Pan",insul:'3" Insulated'}[S.roof];
-  $("quoteOut").hidden=false;$("pdfBtns").hidden=GATE;
+  $("quoteOut").hidden=false;$("pdfBtns").hidden=false;
   $("quoteFlag").innerHTML=GATE?`<b>Your price range: ${rangeTxt(c.sell)}</b><br>Your exact, itemized quote for this ${c.p}' × ${c.w}' cover is being emailed to <b>${esc($("cemail").value.trim())}</b>. The final price is confirmed at a quick site visit before anything is ordered.`:"Your quote is ready.";
   const calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
-  requestAnimationFrame(()=>$(GATE?"quoteFlag":"viewPdf").scrollIntoView({behavior:calm?"auto":"smooth",block:"center"}));
+  requestAnimationFrame(()=>$("viewPdf").scrollIntoView({behavior:calm?"auto":"smooth",block:"center"}));
 });
 const fullAddr=()=>`${$("caddr").value}, ${$("ccity").value}, ${$("cstate").value.toUpperCase()} ${$("czip").value}`;
 const esc=t=>String(t).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
@@ -729,8 +729,8 @@ function buildSheet(){
   </div>
   <div class="sh-lbl">Included</div><ul>${sc.inc.map(x=>`<li class="y"><i>✓</i>${esc(x)}</li>`).join("")}</ul>
   <div class="sh-lbl">Not included</div><ul>${sc.exc.map(x=>`<li class="n"><i>✕</i>${esc(x)}</li>`).join("")}</ul>
-  <div class="sh-price"><div><div style="font-size:10px;font-weight:700;letter-spacing:.1em">TOTAL INSTALLED PRICE</div><small>${c.sf} sq ft · ${money(c.sell/c.sf)} per sq ft · Price confirmed at site visit</small></div><b>${money(c.sell)}</b></div>
-  <div style="font-size:10.5px;color:#5d6872;margin-top:6px">${esc(finLine(c))}</div>
+  <div class="sh-price"><div><div style="font-size:10px;font-weight:700;letter-spacing:.1em">${GATE?"ESTIMATED PRICE RANGE":"TOTAL INSTALLED PRICE"}</div><small>${c.sf} sq ft · ${GATE?"Exact itemized price sent to your email":money(c.sell/c.sf)+" per sq ft"} · Price confirmed at site visit</small></div><b${GATE?' style="font-size:26px"':""}>${GATE?rangeTxt(c.sell):money(c.sell)}</b></div>
+  <div style="font-size:10.5px;color:#5d6872;margin-top:6px">${esc(finLine(GATE?{...c,sell:(priceRange(c.sell)[0]+priceRange(c.sell)[1])/2}:c))}</div>
   <div class="sh-lbl">Terms</div>
   <ul><li>• 50% deposit at signing to order materials. Balance due on completion.</li>
   <li>• Final price is confirmed after a site visit, before any materials are ordered.</li>
