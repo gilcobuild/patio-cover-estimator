@@ -323,7 +323,7 @@ const DEFAULTS={
   gutter_lf:15, ledger_lf:6, post_ea:90, anchor_ea:35, downspout_ea:45,
   trim_lf:4, fastener_sf:0.40, fanbeam:150,
   labor_sf:4.50, labor_insul_sf:5.75, labor_min:900,
-  slab_sf:9, delivery:150, contingency_pct:5, overhead_pct:15, profit_pct:20
+  slab_sf:9, delivery:150, contingency_pct:5, overhead_pct:15, profit_pct:30, promo_max:500
 };
 const RATE_LABELS={
   panel_wpan:"W-pan panel $/sf", panel_flat:"Flat pan panel $/sf", panel_insul:"Insulated panel $/sf",
@@ -331,7 +331,7 @@ const RATE_LABELS={
   anchor_ea:"Post base + slab anchors $/ea", downspout_ea:"Downspout $/ea", trim_lf:"Trim/end caps $/lf",
   fastener_sf:"Fasteners/sealant $/sf", fanbeam:"Fan/light beam $", labor_sf:"Install labor $/sf",
   labor_insul_sf:"Insulated labor $/sf", labor_min:"Labor minimum $", slab_sf:'New 4" slab $/sf (sub)', delivery:"Delivery $",
-  contingency_pct:"Contingency %", overhead_pct:"Overhead + ads %", profit_pct:"Target profit %"
+  contingency_pct:"Contingency %", overhead_pct:"Overhead + ads %", profit_pct:"Profit % after discount", promo_max:"Discount room $ (largest prize)"
 };
 let R={...DEFAULTS};
 try{const s=JSON.parse(localStorage.getItem("gilcoRates")||"null");if(s)R={...DEFAULTS,...s}}catch(e){}
@@ -393,7 +393,9 @@ function calc(ow,op){
   const slab=S.base==="new"?sf*R.slab_sf:0;
   const job=mat+labor+slab+R.delivery+cont;
   const keep=1-(R.overhead_pct+R.profit_pct)/100;
-  const sell=Math.ceil((job/Math.max(keep,0.05))/25)*25;
+  /* price leaves room for the largest prize: after that discount the job still makes the target profit */
+  const promo=Math.max(0,+R.promo_max||0);
+  const sell=Math.ceil((job/Math.max(keep,0.05)+promo)/25)*25;
   const over=sell*R.overhead_pct/100, profit=sell-job-over;
   return {w,p,sf,posts,items,mat,labor,slab,cont,job,sell,over,profit,free};
 }
