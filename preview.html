@@ -177,6 +177,20 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
 @media (max-width:380px){
 .seg.three{grid-template-columns:1fr}.row2,.rates{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.pzbox{border:2px solid var(--bronze);border-radius:12px;background:var(--bronze-soft);padding:16px;display:grid;gap:12px;justify-items:center;text-align:center;margin-top:6px}
+.pzbox h2{margin:0}.pzsub{margin:0;color:var(--muted);font-size:14px;max-width:44ch}
+.pzwheel{position:relative;width:min(300px,100%);aspect-ratio:1;margin-top:10px}
+.pzwheel canvas{width:100%;height:100%;display:block;border-radius:50%;box-shadow:0 0 0 5px #1d2329,0 0 0 8px var(--bronze),0 10px 24px rgba(0,0,0,.25)}
+.pzptr{position:absolute;left:50%;top:-14px;margin-left:-14px;border-left:14px solid transparent;border-right:14px solid transparent;border-top:28px solid #1d2329;z-index:2}
+.pzhub{position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;background:#1d2329;border:4px solid #d9a441;display:grid;place-items:center;color:#fff;font:700 13px var(--display);letter-spacing:.06em;text-transform:uppercase}
+.pzwon{width:100%;display:grid;gap:8px;justify-items:center;border:2px solid #d9a441;border-radius:12px;padding:14px;background:var(--panel)}
+.pzwon h3{margin:0;font-family:var(--display);font-size:32px;line-height:1;color:var(--bronze);text-transform:uppercase}
+.pzwon p{margin:0}.pzodds{width:100%;border-collapse:collapse;font-size:13px}
+.pzodds td{padding:4px 2px;border-bottom:1px solid var(--line);text-align:left}.pzodds td.n{text-align:right;font-family:var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.pzodds i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.pzhint{border-left:4px solid #d9a441;background:var(--bronze-soft);padding:8px 12px;border-radius:6px;font-size:14px;margin:0}
+.hdrprice .hp-m s{color:var(--muted)}
+#pzfx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
 </style>
 
 <svg class="ghost-bg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
@@ -280,8 +294,18 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
     <h2>3. What you get</h2>
     <p class="hint">We confirm the price with a quick site visit before anything is ordered.</p>
     <table id="incl"></table>
+    <div class="pzbox" id="prizeBox" hidden>
+      <h2>Spin for your online discount</h2>
+      <p class="pzsub">One spin per quote, and every spin wins. Then fill out the form below to apply your prize to this quote.</p>
+      <div class="pzwheel"><div class="pzptr"></div><canvas id="pzWheel" width="600" height="600" role="img" aria-label="Discount wheel"></canvas><div class="pzhub">Gilco</div></div>
+      <button class="btn" id="pzSpin" type="button">Spin the wheel</button>
+      <div id="pzWon" class="pzwon" hidden aria-live="polite"></div>
+      <table class="pzodds" id="pzOdds" aria-label="Prizes and odds"></table>
+      <p class="fine" style="margin:0">Odds of each prize are shown above. One prize per household, good for 7 days. The prize is a discount off the contract price and is subject to the contract's payment terms.</p>
+    </div>
     <h2 style="margin-top:6px">4. Pick your install day</h2>
     <p class="hint">Tell us where and when. We'll confirm the price with a quick site visit before anything is ordered.</p>
+    <p class="pzhint" id="pzHint" hidden></p>
     <form id="book" class="field" style="gap:12px">
       <div class="field"><label class="label" for="cname">Name</label><input id="cname" type="text" required autocomplete="name"></div>
       <div class="row2">
@@ -299,7 +323,7 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
         <div class="cal" id="dayPick" role="radiogroup" aria-labelledby="cdateLbl"></div>
         <div class="cal-key"><span><i class="k-open"></i>Open</span><span><i class="k-book"></i>Booked</span><span><i class="k-soon"></i>Too soon (within 1 week)</span></div>
       </div>
-      <button class="btn" type="submit">Get my quote</button>
+      <button class="btn" type="submit" id="bookBtn">Get my quote</button>
     </form>
     <div id="quoteOut" hidden class="field" style="gap:10px">
       <div class="flag" id="quoteFlag">Your quote is ready.</div>
@@ -656,13 +680,16 @@ function render(){
   const c=calc();
   syncPicker();
   renderDsPick(c);
-  renderFin(c);
+  renderFin(PRIZE&&PRIZE.applied?{...c,sell:netSell(c)}:c);
   drawPlan(c);
   schedule3d(c);
   const hs=$("hdrSell");hs.className="";
   if(!S.sized){hs.textContent=money(0);$("hdrMeta").textContent="Pick a size"}
   else if(GATE&&!UNLOCK){hs.textContent="See price";hs.className="ask";$("hdrMeta").textContent=`${c.p}' × ${c.w}' · enter email above`}
+  else if(PRIZE&&PRIZE.applied){hs.textContent=money(netSell(c));$("hdrMeta").innerHTML=`${c.p}' × ${c.w}' · <s>${money(c.sell)}</s> ${esc(PRIZE.t)}`}
+  else if(PRIZE){hs.textContent=money(c.sell);$("hdrMeta").textContent=`${c.p}' × ${c.w}' · ${PRIZE.t} won, finish quote`}
   else{hs.textContent=money(c.sell);$("hdrMeta").textContent=`${c.p}' × ${c.w}' · ${money(c.sell/c.sf)}/sf`}
+  const pzOn=GATE&&UNLOCK&&S.sized;$("prizeBox").hidden=!pzOn;if(pzOn){pzOdds();pzShow(false)}else{$("pzHint").hidden=true}
   const roofName={wpan:"W-pan aluminum roof",flat:"Flat pan aluminum roof",insul:'3" insulated aluminum roof'}[S.roof];
   const sc=scope(c);
   $("incl").innerHTML=`<tr class="grp"><td>Included</td></tr>`+sc.inc.map(r=>`<tr><td><span class="mk yes">✓</span>${r}</td></tr>`).join("")
@@ -711,6 +738,76 @@ function pickDay(id){
   $("dayPick").querySelectorAll(".day").forEach(b=>{const on=b.dataset.d===id;b.classList.toggle("sel",on);b.setAttribute("aria-checked",on)});
 }
 buildCal();
+/* ===== Discount wheel (customer): spin after the price shows, prize applies when the quote form is filled out.
+   On the website the spin is picked by the server (pc_spin, one per quote, published odds). ===== */
+const PZ_COLORS=["#4b5a68","#8a5a2b","#2f7d4f","#1d5fa8","#6b4a8c","#a4661a","#2a6b74","#9b3d33","#556b2f","#7a4b5c"];
+let PRIZES=[{t:"$100 off",off:100,odds:30},{t:"$150 off",off:150,odds:25},{t:"$200 off",off:200,odds:15},{t:"$250 off",off:250,odds:12},
+  {t:"$300 off",off:300,odds:8},{t:"5% off",pct:5,odds:5},{t:"$400 off",off:400,odds:3},{t:"$500 off",off:500,odds:2}];
+let PRIZE=null;try{PRIZE=JSON.parse(localStorage.getItem("gilcoPrize")||"null")}catch(_){}
+if(PRIZE&&PRIZE.expires&&new Date(PRIZE.expires)<new Date())PRIZE=null;
+const savePrize=()=>{try{localStorage.setItem("gilcoPrize",JSON.stringify(PRIZE))}catch(_){}};
+function prizeOff(sell){if(!PRIZE)return 0;const v=PRIZE.pct?Math.round(sell*PRIZE.pct/100):(+PRIZE.off||0);const cap=+R.promo_max||0;return cap>0?Math.min(v,cap):v}
+function netSell(c){return PRIZE&&PRIZE.applied?c.sell-prizeOff(c.sell):c.sell}
+function setPrizes(list){if(Array.isArray(list)&&list.length){PRIZES=list;pzDraw();pzOdds()}}
+let pzRot=0,pzBusy=false;
+function pzDraw(){
+  const cv=$("pzWheel");if(!cv)return;const cx=cv.getContext("2d"),Rr=cv.width/2,N=PRIZES.length,SEG=2*Math.PI/N;
+  cx.clearRect(0,0,cv.width,cv.height);cx.save();cx.translate(Rr,Rr);cx.rotate(pzRot);
+  PRIZES.forEach((p,i)=>{const a0=-Math.PI/2+i*SEG-SEG/2;cx.beginPath();cx.moveTo(0,0);cx.arc(0,0,Rr-4,a0,a0+SEG);cx.closePath();
+    cx.fillStyle=PZ_COLORS[i%PZ_COLORS.length];cx.fill();cx.strokeStyle="#fff";cx.lineWidth=4;cx.stroke();
+    cx.save();cx.rotate(a0+SEG/2);cx.textAlign="right";cx.textBaseline="middle";cx.fillStyle="#fff";
+    cx.font="700 38px 'Barlow Condensed','Arial Narrow',sans-serif";cx.fillText(String(p.t).toUpperCase(),Rr-26,0);cx.restore()});
+  for(let i=0;i<N*2;i++){const a=-Math.PI/2+i*SEG/2-SEG/2;cx.beginPath();cx.arc(Math.cos(a)*(Rr-14),Math.sin(a)*(Rr-14),5,0,2*Math.PI);cx.fillStyle="#f5d27a";cx.fill()}
+  cx.restore();
+}
+function pzOdds(){const c=calc();$("pzOdds").innerHTML=PRIZES.map((p,i)=>`<tr><td><i style="background:${PZ_COLORS[i%PZ_COLORS.length]}"></i>${esc(p.t)}${p.pct&&S.sized?` <span class="fine">(${money(Math.round(c.sell*p.pct/100))} on this quote)</span>`:""}</td><td class="n">${p.odds}% chance</td></tr>`).join("")}
+function pzLocalPick(){let r=Math.random()*100;for(let i=0;i<PRIZES.length;i++){r-=+PRIZES[i].odds||0;if(r<0)return i}return PRIZES.length-1}
+function pzSpinTo(i,done){
+  const N=PRIZES.length,SEG=2*Math.PI/N,still=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const target=-(i*SEG)+(Math.random()-.5)*SEG*.6,start=pzRot,final=start+12*Math.PI+(((target-start)%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+  const dur=still?400:3000,t0=performance.now();
+  (function step(t){const k=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-k,4);pzRot=start+(final-start)*e;pzDraw();
+    if(k<1)requestAnimationFrame(step);else{pzRot=final%(2*Math.PI);pzDraw();done()}})(t0);
+}
+async function pzSpin(){
+  if(pzBusy||PRIZE)return;pzBusy=true;const b=$("pzSpin");b.disabled=true;b.textContent="Spinning…";
+  let pz=null;
+  if(window.GilcoPhotos){ /* website: the server picks (one spin per quote) */
+    let tok=null;try{tok=localStorage.getItem("gilcoQuoteToken")}catch(_){}
+    try{if(tok){const r=await GilcoPhotos.rpc("pc_spin",{p_token:tok});if(r&&(r.state==="ok"||r.state==="already"))pz=r.prize}}catch(_){}
+    if(!pz){pzBusy=false;b.disabled=false;b.textContent="Spin the wheel";$("pzWon").hidden=false;$("pzWon").innerHTML="<p>We couldn't reach the wheel just now. Check your signal and tap Spin again.</p>";return}
+  }else{const i=pzLocalPick();pz={...PRIZES[i],index:i,expires:new Date(Date.now()+7*864e5).toISOString()}}
+  const idx=Math.max(0,Math.min(PRIZES.length-1,+pz.index||0));
+  pzSpinTo(idx,()=>{pzBusy=false;PRIZE={t:pz.t,off:pz.off,pct:pz.pct,index:idx,expires:pz.expires,applied:false};savePrize();pzShow(true);render()});
+}
+function pzShow(celebrate){
+  const box=$("prizeBox");if(!box)return;
+  if(!PRIZE){$("pzSpin").hidden=false;$("pzWon").hidden=true;$("pzHint").hidden=true;$("bookBtn").textContent="Get my quote";return}
+  const c=calc(),off=prizeOff(c.sell),exp=PRIZE.expires?new Date(PRIZE.expires).toLocaleDateString("en-US",{month:"long",day:"numeric"}):"";
+  $("pzSpin").hidden=true;$("pzWon").hidden=false;
+  $("pzWon").innerHTML=PRIZE.applied
+    ?`<p class="fine">PRIZE APPLIED</p><h3>${esc(PRIZE.t)}</h3><p>${money(c.sell)} − ${money(off)} = <b>${money(c.sell-off)}</b>. It's on your quote.</p>`
+    :`<p class="fine">YOU WON</p><h3>${esc(PRIZE.t)}</h3><p>${money(c.sell)} − ${money(off)} = <b>${money(c.sell-off)}</b></p><p>Fill out the form below to apply it to your quote.${exp?` Reserved for you until ${exp}.`:""}</p><button class="btn" type="button" id="pzGo">Fill out the form to get my discount</button>`;
+  const go=$("pzGo");if(go)go.onclick=()=>{$("cname").scrollIntoView({behavior:"smooth",block:"center"});setTimeout(()=>$("cname").focus({preventScroll:true}),500)};
+  $("pzHint").hidden=PRIZE.applied;$("pzHint").innerHTML=`<b>${esc(PRIZE.t)} is waiting.</b> Fill out this form and tap the button to apply it.`;
+  $("bookBtn").textContent=PRIZE.applied?"Update my quote":`Apply my ${money(off)} discount & get my quote`;
+  if(celebrate)pzFireworks();
+}
+function pzFireworks(){
+  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  let fx=$("pzfx");if(!fx){fx=document.createElement("canvas");fx.id="pzfx";fx.setAttribute("aria-hidden","true");document.body.appendChild(fx)}
+  const d=devicePixelRatio||1;fx.width=innerWidth*d;fx.height=innerHeight*d;const fc=fx.getContext("2d");let parts=[],n=0;
+  const cols=["#d9a441","#1d5fa8","#2f7d4f","#9b3d33","#8a5a2b","#f5d27a","#6b4a8c"];
+  const iv=setInterval(()=>{const x=fx.width*(.15+Math.random()*.7),y=fx.height*(.12+Math.random()*.4),c=cols[Math.floor(Math.random()*cols.length)];
+    for(let i=0;i<70;i++){const a=Math.random()*2*Math.PI,s=2+Math.random()*5;parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:60+Math.random()*30,c})}
+    if(++n>=7)clearInterval(iv)},280);
+  (function loop(){fc.clearRect(0,0,fx.width,fx.height);
+    parts.forEach(p=>{p.x+=p.vx*d;p.y+=p.vy*d;p.vy+=.06;p.vx*=.985;p.vy*=.985;p.life--;fc.globalAlpha=Math.max(0,p.life/90);fc.fillStyle=p.c;fc.beginPath();fc.arc(p.x,p.y,2.4*d,0,2*Math.PI);fc.fill()});
+    parts=parts.filter(p=>p.life>0);fc.globalAlpha=1;if(parts.length||n<7)requestAnimationFrame(loop);else fc.clearRect(0,0,fx.width,fx.height)})();
+}
+$("pzSpin").onclick=pzSpin;
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(pzDraw);
+if(PRIZE){pzRot=-(PRIZE.index||0)*2*Math.PI/PRIZES.length}
 $("book").addEventListener("submit",e=>{
   e.preventDefault();
   if(!S.sized){togglePicker(true);$("sizeBtn").scrollIntoView({behavior:"smooth",block:"center"});$("sizeChg").textContent="Pick a size first";return}
@@ -718,10 +815,11 @@ $("book").addEventListener("submit",e=>{
     $("quoteFlag").innerHTML="We currently install in the greater New Orleans area (ZIP codes starting 700 or 701). Check your ZIP code, or call us and we'll see if we can help.";
     $("czip").focus();return}
   if(GATE&&!UNLOCK){unlockWith($("cemail").value.trim())}
+  if(PRIZE&&!PRIZE.applied){PRIZE.applied=true;savePrize()}
   const c=render();const sc=scope(c);
   const roof={wpan:"W-Pan",flat:"Flat Pan",insul:'3" Insulated'}[S.roof];
   $("quoteOut").hidden=false;$("pdfBtns").hidden=false;
-  $("quoteFlag").innerHTML=`<b>Your quote is ready: ${money(c.sell)}</b> for a ${c.p}' × ${c.w}' cover. Tap View PDF quote to see the full quote. The final price is confirmed at a quick site visit before anything is ordered.`;
+  $("quoteFlag").innerHTML=`<b>Your quote is ready: ${money(netSell(c))}</b>${PRIZE&&PRIZE.applied?` (includes your ${esc(PRIZE.t)} prize)`:""} for a ${c.p}' × ${c.w}' cover. Tap View PDF quote to see the full quote. The final price is confirmed at a quick site visit before anything is ordered.`;
   const calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
   requestAnimationFrame(()=>$("viewPdf").scrollIntoView({behavior:calm?"auto":"smooth",block:"center"}));
 });
@@ -733,6 +831,7 @@ function buildSheet(){
   const qn="GC-PC-"+now.toISOString().slice(2,10).replace(/-/g,"");
   const roof={wpan:"W-Pan",flat:"Flat Pan",insul:'3" Insulated'}[S.roof];
   const dsN=dsList(c.w).length;
+  const pzOn2=!!(PRIZE&&PRIZE.applied&&GATE), pzOff2=pzOn2?prizeOff(c.sell):0, net2=c.sell-pzOff2;
   const inst=$("cdate").value?fmtDate(new Date($("cdate").value+"T12:00")):"To be scheduled";
   $("sheet").innerHTML=`
   <div class="sh-top">
@@ -751,13 +850,15 @@ function buildSheet(){
   </div>
   <div class="sh-lbl">Included</div><ul>${sc.inc.map(x=>`<li class="y"><i>✓</i>${esc(x)}</li>`).join("")}</ul>
   <div class="sh-lbl">Not included</div><ul>${sc.exc.map(x=>`<li class="n"><i>✕</i>${esc(x)}</li>`).join("")}</ul>
-  <div class="sh-price"><div><div style="font-size:10px;font-weight:700;letter-spacing:.1em">TOTAL INSTALLED PRICE</div><small>${c.sf} sq ft · ${money(c.sell/c.sf)} per sq ft · Price confirmed at site visit</small></div><b>${money(c.sell)}</b></div>
-  <div style="font-size:10.5px;color:#5d6872;margin-top:6px">${esc(finLine(c))}</div>
+  ${pzOn2?`<div class="sh-two" style="margin-top:14px"><div>Patio cover, installed</div><div style="text-align:right">${money(c.sell)}</div><div>Online prize: ${esc(PRIZE.t)}</div><div style="text-align:right">−${money(pzOff2)}</div></div>`:""}
+  <div class="sh-price"><div><div style="font-size:10px;font-weight:700;letter-spacing:.1em">TOTAL INSTALLED PRICE</div><small>${c.sf} sq ft · ${money(net2/c.sf)} per sq ft · Price confirmed at site visit</small></div><b>${money(net2)}</b></div>
+  <div style="font-size:10.5px;color:#5d6872;margin-top:6px">${esc(finLine({...c,sell:net2}))}</div>
   <div class="sh-lbl">Terms</div>
   <ul><li>• 50% deposit at signing to order materials. Balance due on completion.</li>
   <li>• Final price is confirmed after a site visit, before any materials are ordered.</li>
   <li>• Install date is scheduled once materials arrive and is subject to weather.</li>
-  <li>• This quote is valid for 30 days from the date above.</li></ul>
+  <li>• This quote is valid for 30 days from the date above.</li>${pzOn2?`
+  <li>• The online prize is a discount off the contract price. It is void if the account is referred to a collection agency or attorney, and the full undiscounted price becomes due (see contract).</li>`:""}</ul>
   <div class="sh-lbl">Acceptance</div>
   <div class="sh-sign"><div>Customer signature</div><div>Date</div><div>Gilco Home Services, LLC</div><div>Date</div></div>
   <div class="sh-foot"><span>Gilco Home Services, LLC · Aluminum Patio Covers</span><span>Quote ${qn} · Page 1 of 1</span></div>`;
@@ -785,5 +886,5 @@ $("finBtn").onclick=()=>{$("finPanel").scrollIntoView({behavior:"smooth",block:"
 render();
 </script>
 
-<script src="photos.js?v=8"></script>
+<script src="photos.js?v=9"></script>
 </body></html>

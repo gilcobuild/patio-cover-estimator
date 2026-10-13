@@ -127,6 +127,8 @@ function showSpot(el,spot){ /* read-only map for the installer */
 }
 window.GilcoPhotos={rpc,mount,mountSpot,showSpot,SLOTS};
 /* estimator: load the saved supplier price list so website prices match the back office */
+/* estimator: load the live prize list + odds so the wheel matches what the server picks from */
+if(typeof setPrizes==="function"){rpc("pc_prizes",{}).then(v=>{try{setPrizes(v)}catch(_){}}).catch(()=>{})}
 if(typeof applyPricebook==="function"){rpc("pc_pricebook",{}).then(v=>{try{if(applyPricebook(v))render()}catch(_){}}).catch(()=>{})}
 /* estimator: capture the email lead as soon as it's entered at the top */
 document.addEventListener("gilco:email",async e=>{
@@ -142,7 +144,7 @@ if(book&&step){
     const c=calc(), w=+document.getElementById("w").value, g=id=>document.getElementById(id).value.trim();
     const body={cust:{name:g("cname"),phone:g("cphone"),email:g("cemail"),addr:g("caddr"),city:g("ccity"),state:g("cstate").toUpperCase(),zip:g("czip")},
       cfg:{w,p:+document.getElementById("p").value,roof:S.roof,mount:S.mount,color:S.color,fans:S.fans,base:S.base,ds:S.ds,tier:S.tier,term:S.term},
-      sell:c.sell,install:g("cdate")};
+      sell:(typeof netSell==="function"?netSell(c):c.sell),install:g("cdate")};
     let tok=null;try{tok=localStorage.getItem("gilcoQuoteToken")}catch(_){}
     step.hidden=false;step.innerHTML=`<p class="hint">Saving your quote…</p>`;
     try{const r=await rpc("pc_quote_save",{p_token:tok,p:body});
