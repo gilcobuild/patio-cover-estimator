@@ -101,7 +101,9 @@ tr.profit td{color:var(--ok);font-weight:600}
 .btns .btn{flex:1 1 160px}
 .ok{color:var(--ok);font-size:13px;font-weight:600}
 textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:10px}
-.v3d{position:relative;height:320px;border-radius:8px;overflow:hidden;background:var(--bg);touch-action:none;cursor:grab}
+.v3d{position:relative;height:320px;border-radius:8px;overflow:hidden;background:var(--bg);touch-action:pan-y;cursor:pointer;outline:2px solid transparent;outline-offset:-2px;transition:outline-color .15s}
+.v3d.on{touch-action:none;cursor:grab;outline-color:var(--bronze)}
+.v3dtip{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(29,35,41,.78);color:#fff;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px;pointer-events:none;white-space:nowrap}
 .v3d canvas{display:block;width:100%!important;height:100%!important}
 .v3dmsg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:16px}
 .dspick{display:flex;flex-wrap:wrap;gap:8px}
@@ -271,7 +273,7 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
 
   <section class="panel">
     <h2>See it in 3D</h2>
-    <div class="v3d" id="v3d"><p id="v3dMsg" class="hint v3dmsg" hidden>The 3D view couldn't load. Check your connection and reload the page.</p></div>
+    <div class="v3d" id="v3d"><span class="v3dtip" id="v3dTip">Tap to spin it</span><p id="v3dMsg" class="hint v3dmsg" hidden>The 3D view couldn't load. Check your connection and reload the page.</p></div>
     <div class="seg two" id="views">
       <button class="opt" type="button" data-v="out" aria-pressed="true"><b>Outside view</b></button>
       <button class="opt" type="button" data-v="under" aria-pressed="false"><b>Under the cover</b></button>
@@ -476,6 +478,14 @@ function init3d(){
   T.cam=new THREE.PerspectiveCamera(40,1,0.1,600);
   T.ctl=new THREE.OrbitControls(T.cam,T.r.domElement);
   T.ctl.enableDamping=true;T.ctl.autoRotate=true;T.ctl.autoRotateSpeed=1.4;
+  /* page scrolls past the 3D view; tap it to turn spinning on, tap again (or tap elsewhere) to turn it off */
+  T.ctl.enabled=false;
+  const act=on=>{T.ctl.enabled=on;el.classList.toggle("on",on);$("v3dTip").textContent=on?"Drag to spin · tap again when done":"Tap to spin it"};
+  let pd=null;
+  el.addEventListener("pointerdown",e=>{pd={x:e.clientX,y:e.clientY,t:Date.now()}},true);
+  el.addEventListener("pointerup",e=>{if(!pd)return;const moved=Math.hypot(e.clientX-pd.x,e.clientY-pd.y),quick=Date.now()-pd.t<400;pd=null;
+    if(moved<8&&quick)act(!T.ctl.enabled)},true);
+  document.addEventListener("pointerdown",e=>{if(T.ctl.enabled&&!el.contains(e.target))act(false)});
   T.ctl.maxPolarAngle=Math.PI*0.88;T.ctl.minDistance=2;T.ctl.maxDistance=160;T.ctl.enablePan=false;
   T.ctl.addEventListener("start",()=>{T.ctl.autoRotate=false});
   T.scene.add(new THREE.HemisphereLight(0xffffff,0x7a8670,0.85));
@@ -485,11 +495,17 @@ function init3d(){
   const fit=()=>{const w=el.clientWidth,h=el.clientHeight;if(!w||!h)return;T.r.setSize(w,h,false);T.cam.aspect=w/h;T.cam.updateProjectionMatrix()};
   fit();if(window.ResizeObserver)new ResizeObserver(fit).observe(el);else window.addEventListener("resize",fit);
   const still=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
-  (function loop(){requestAnimationFrame(loop);T.ctl.update();if(T.cam.position.y<1.2)T.cam.position.y=1.2;if(!still&&T.fans)T.fans.forEach(f=>f.rotation.y+=0.045);T.r.render(T.scene,T.cam)})();
+  (function loop(){requestAnimationFrame(loop);
+    if(T.ctl.autoRotate&&isFinite(T.ctl.maxAzimuthAngle)){const az=T.ctl.getAzimuthalAngle(),lim=T.ctl.maxAzimuthAngle-0.03;
+      if(az>lim)T.ctl.autoRotateSpeed=Math.abs(T.ctl.autoRotateSpeed);else if(az<-lim)T.ctl.autoRotateSpeed=-Math.abs(T.ctl.autoRotateSpeed)}
+    T.ctl.update();if(T.cam.position.y<1.2)T.cam.position.y=1.2;if(!still&&T.fans)T.fans.forEach(f=>f.rotation.y+=0.045);T.r.render(T.scene,T.cam)})();
 }
 function setView(v){
   if(!T.ctl)return;T.view=v;
   const d=T.dims||{W:20,P:12,hw:10,hf:9.5};
+  /* attached: only views from the yard side, never around the back of the house */
+  const lim=d.free?Infinity:1.25;T.ctl.minAzimuthAngle=-lim;T.ctl.maxAzimuthAngle=lim;
+  T.ctl.maxPolarAngle=v==="under"?Math.PI*0.88:Math.PI*0.47;
   if(v==="under"){
     T.ctl.autoRotate=false;
     T.cam.position.set(d.W*0.28,3.2,d.P*0.42);
@@ -613,8 +629,8 @@ function build3d(c){
       T.fans.push(blades);
     }
   }
-  T.dims={W,P,hw,hf};
-  const key=W+"x"+P;if(T.key!==key){T.key=key;setView(T.view||"out")}
+  T.dims={W,P,hw,hf,free};
+  const key=W+"x"+P+(free?"f":"a");if(T.key!==key){T.key=key;setView(T.view||"out")}
 }
 let q3d=false;
 function schedule3d(c){if(q3d)return;q3d=true;requestAnimationFrame(()=>{q3d=false;build3d(c)})}
