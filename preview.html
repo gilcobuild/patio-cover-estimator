@@ -509,11 +509,14 @@ function setView(v){
   if(v==="under"){
     /* standing under the roof at eye height, looking up toward the house and the fan; spinning turned on */
     T.ctl.autoRotate=false;
-    T.cam.position.set(d.W*0.3,4.8,d.P*0.45);
-    T.ctl.target.set(-d.W*0.05,(d.hw+d.hf)/2-2.2,-d.P*0.2);
+    /* from the front corner of the slab with a wide lens, so the whole patio fits in the first view */
+    T.cam.fov=68;T.cam.updateProjectionMatrix();
+    T.cam.position.set(d.W*0.46,4.4,d.P*0.62);
+    T.ctl.target.set(-d.W*0.12,(d.hw+d.hf)/2-2.6,-d.P*0.25);
     T.ctl.maxDistance=Math.max(d.W,d.P)*1.2;
     if(T.act)T.act(true);
   }else{
+    T.cam.fov=40;T.cam.updateProjectionMatrix();
     /* framed on the cover (in front of the house), not the whole house */
     const D=Math.max(d.W,d.P)*1.15+8;
     T.cam.position.set(D*0.45,D*0.42,d.P*0.15+D*0.95);T.ctl.target.set(0,4.2,d.P*0.15);T.ctl.autoRotate=true;
