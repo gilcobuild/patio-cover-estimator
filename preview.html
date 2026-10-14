@@ -505,14 +505,14 @@ function setView(v){
   const d=T.dims||{W:20,P:12,hw:10,hf:9.5};
   /* attached: only views from the yard side, never around the back of the house */
   const lim=d.free?Infinity:0.85;T.ctl.minAzimuthAngle=-lim;T.ctl.maxAzimuthAngle=lim;
-  T.ctl.maxPolarAngle=v==="under"?Math.PI*0.88:Math.PI*0.47;
+  T.ctl.maxPolarAngle=v==="under"?Math.PI*0.88:Math.PI*0.62; /* outside view can tilt low enough to see the underside */
   if(v==="under"){
     /* standing under the roof at eye height, looking up toward the house and the fan; spinning turned on */
     T.ctl.autoRotate=false;
     /* from the front corner of the slab with a wide lens, so the whole patio fits in the first view */
     T.cam.fov=68;T.cam.updateProjectionMatrix();
-    T.cam.position.set(d.W*0.46,4.4,d.P*0.62);
-    T.ctl.target.set(-d.W*0.12,(d.hw+d.hf)/2-2.6,-d.P*0.25);
+    T.cam.position.set(0,4.4,d.P*0.5+1.6);
+    T.ctl.target.set(0,(d.hw+d.hf)/2-2.4,-d.P*0.3);
     T.ctl.maxDistance=Math.max(d.W,d.P)*1.2;
     if(T.act)T.act(true);
   }else{
