@@ -816,7 +816,6 @@ function pzShow(celebrate){
   if(celebrate)pzFireworks();
 }
 function pzFireworks(){
-  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;
   let fx=$("pzfx");if(!fx){fx=document.createElement("canvas");fx.id="pzfx";fx.setAttribute("aria-hidden","true");document.body.appendChild(fx)}
   const d=devicePixelRatio||1;fx.width=innerWidth*d;fx.height=innerHeight*d;const fc=fx.getContext("2d");let parts=[],n=0;
   const cols=["#d9a441","#1d5fa8","#2f7d4f","#9b3d33","#8a5a2b","#f5d27a","#6b4a8c"];
