@@ -504,15 +504,17 @@ function setView(v){
   if(!T.ctl)return;T.view=v;
   const d=T.dims||{W:20,P:12,hw:10,hf:9.5};
   /* attached: only views from the yard side, never around the back of the house */
-  const lim=d.free?Infinity:1.25;T.ctl.minAzimuthAngle=-lim;T.ctl.maxAzimuthAngle=lim;
+  const lim=d.free?Infinity:0.85;T.ctl.minAzimuthAngle=-lim;T.ctl.maxAzimuthAngle=lim;
   T.ctl.maxPolarAngle=v==="under"?Math.PI*0.88:Math.PI*0.47;
   if(v==="under"){
     T.ctl.autoRotate=false;
     T.cam.position.set(d.W*0.28,3.2,d.P*0.42);
     T.ctl.target.set(-d.W*0.08,(d.hw+d.hf)/2-1.2,-d.P*0.12);
   }else{
-    const D=Math.max(d.W,d.P)*1.35+10;
-    T.cam.position.set(D*0.85,D*0.5,D*1.05);T.ctl.target.set(0,4.5,0);T.ctl.autoRotate=true;
+    /* framed on the cover (in front of the house), not the whole house */
+    const D=Math.max(d.W,d.P)*0.95+7;
+    T.cam.position.set(D*0.45,D*0.42,d.P*0.15+D*0.95);T.ctl.target.set(0,4.2,d.P*0.15);T.ctl.autoRotate=true;
+    T.ctl.maxDistance=D*1.5;
   }
   T.ctl.update();
   document.querySelectorAll("#views .opt").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));
