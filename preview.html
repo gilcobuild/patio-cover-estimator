@@ -274,10 +274,7 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
   <section class="panel">
     <h2>See it in 3D</h2>
     <div class="v3d" id="v3d"><span class="v3dtip" id="v3dTip">Tap to spin it</span><p id="v3dMsg" class="hint v3dmsg" hidden>The 3D view couldn't load. Check your connection and reload the page.</p></div>
-    <div class="seg two" id="views">
-      <button class="opt" type="button" data-v="out" aria-pressed="true"><b>Outside view</b></button>
-      <button class="opt" type="button" data-v="under" aria-pressed="false"><b>Under the cover</b></button>
-    </div>
+    <p class="hint" style="margin:0">Tap the picture, then drag to turn it. Drag up to look under the cover.</p>
   </section>
 
 
@@ -505,7 +502,7 @@ function setView(v){
   const d=T.dims||{W:20,P:12,hw:10,hf:9.5};
   /* attached: only views from the yard side, never around the back of the house */
   const lim=d.free?Infinity:0.85;T.ctl.minAzimuthAngle=-lim;T.ctl.maxAzimuthAngle=lim;
-  T.ctl.maxPolarAngle=v==="under"?Math.PI*0.88:Math.PI*0.62; /* outside view can tilt low enough to see the underside */
+  T.ctl.maxPolarAngle=v==="under"?Math.PI*0.88:Math.PI*0.72; /* tilt low enough to look up at the underside */
   if(v==="under"){
     /* standing under the roof at eye height, looking up toward the house and the fan; spinning turned on */
     T.ctl.autoRotate=false;
