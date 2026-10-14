@@ -511,7 +511,7 @@ function setView(v){
     T.ctl.autoRotate=false;
     /* from the front corner of the slab with a wide lens, so the whole patio fits in the first view */
     T.cam.fov=68;T.cam.updateProjectionMatrix();
-    T.cam.position.set(0,4.4,d.P*0.5+1.6);
+    T.cam.position.set(d.W*0.14,4.4,d.P*0.5+1.6);
     T.ctl.target.set(0,(d.hw+d.hf)/2-2.4,-d.P*0.3);
     T.ctl.maxDistance=Math.max(d.W,d.P)*1.2;
     if(T.act)T.act(true);
