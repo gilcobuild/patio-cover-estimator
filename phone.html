@@ -32,8 +32,9 @@ body{background:radial-gradient(circle at 50% 30%,#3a434c,#171b1f 70%);font:14px
   <div class="phone"><div class="screen">
     <div class="island"></div>
     <div class="status"><span>9:41</span><i>▂▄▆ ᯤ ▮▮▮</i></div>
-    <iframe src="preview.html" title="Gilco app on iPhone"></iframe>
+    <iframe id="app" title="Gilco app on iPhone"></iframe>
     <div class="home"></div><div class="bar"></div>
   </div></div>
 </div>
+<script>document.getElementById("app").src="preview.html?v="+Date.now()</script>
 </body></html>
