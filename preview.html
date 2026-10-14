@@ -299,7 +299,6 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
       <div class="pzwheel"><div class="pzptr"></div><canvas id="pzWheel" width="600" height="600" role="img" aria-label="Discount wheel"></canvas><div class="pzhub">Gilco</div></div>
       <button class="btn" id="pzSpin" type="button">Spin the wheel</button>
       <div id="pzWon" class="pzwon" hidden aria-live="polite"></div>
-      <table class="pzodds" id="pzOdds" aria-label="Possible prizes"></table>
       <p class="fine" style="margin:0">One prize per household, good for 7 days. The prize is a discount off the contract price and is subject to the contract's payment terms.</p>
     </div>
     <h2 style="margin-top:6px">4. Pick your install day</h2>
@@ -783,7 +782,7 @@ function pzDraw(){
   for(let i=0;i<N*2;i++){const a=-Math.PI/2+i*SEG/2-SEG/2;cx.beginPath();cx.arc(Math.cos(a)*(Rr-14),Math.sin(a)*(Rr-14),5,0,2*Math.PI);cx.fillStyle="#f5d27a";cx.fill()}
   cx.restore();
 }
-function pzOdds(){const c=calc();$("pzOdds").innerHTML=PRIZES.map((p,i)=>`<tr><td><i style="background:${PZ_COLORS[i%PZ_COLORS.length]}"></i>${esc(p.t)}${p.pct&&S.sized?` <span class="fine">(${money(Math.round(c.sell*p.pct/100))} on this quote)</span>`:""}</td></tr>`).join("")}
+function pzOdds(){if(!$("pzOdds"))return;const c=calc();$("pzOdds").innerHTML=PRIZES.map((p,i)=>`<tr><td><i style="background:${PZ_COLORS[i%PZ_COLORS.length]}"></i>${esc(p.t)}${p.pct&&S.sized?` <span class="fine">(${money(Math.round(c.sell*p.pct/100))} on this quote)</span>`:""}</td></tr>`).join("")}
 function pzLocalPick(){let r=Math.random()*100;for(let i=0;i<PRIZES.length;i++){r-=+PRIZES[i].odds||0;if(r<0)return i}return PRIZES.length-1}
 function pzSpinTo(i,done){
   const N=PRIZES.length,SEG=2*Math.PI/N,still=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
