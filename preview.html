@@ -480,7 +480,7 @@ function init3d(){
   T.ctl.enableDamping=true;T.ctl.autoRotate=true;T.ctl.autoRotateSpeed=1.4;
   /* page scrolls past the 3D view; tap it to turn spinning on, tap again (or tap elsewhere) to turn it off */
   T.ctl.enabled=false;
-  const act=on=>{T.ctl.enabled=on;el.classList.toggle("on",on);$("v3dTip").textContent=on?"Drag to spin · tap again when done":"Tap to spin it"};
+  const act=T.act=on=>{T.ctl.enabled=on;el.classList.toggle("on",on);$("v3dTip").textContent=on?"Drag to spin · tap again when done":"Tap to spin it"};
   let pd=null;
   el.addEventListener("pointerdown",e=>{pd={x:e.clientX,y:e.clientY,t:Date.now()}},true);
   el.addEventListener("pointerup",e=>{if(!pd)return;const moved=Math.hypot(e.clientX-pd.x,e.clientY-pd.y),quick=Date.now()-pd.t<400;pd=null;
@@ -501,20 +501,24 @@ function init3d(){
     T.ctl.update();if(T.cam.position.y<1.2)T.cam.position.y=1.2;if(!still&&T.fans)T.fans.forEach(f=>f.rotation.y+=0.045);T.r.render(T.scene,T.cam)})();
 }
 function setView(v){
-  if(!T.ctl)return;T.view=v;
+  if(!T.ctl)return;T.wasUnder=T.view==="under";T.view=v;
   const d=T.dims||{W:20,P:12,hw:10,hf:9.5};
   /* attached: only views from the yard side, never around the back of the house */
   const lim=d.free?Infinity:0.85;T.ctl.minAzimuthAngle=-lim;T.ctl.maxAzimuthAngle=lim;
   T.ctl.maxPolarAngle=v==="under"?Math.PI*0.88:Math.PI*0.47;
   if(v==="under"){
+    /* standing under the roof at eye height, looking up toward the house and the fan; spinning turned on */
     T.ctl.autoRotate=false;
-    T.cam.position.set(d.W*0.28,3.2,d.P*0.42);
-    T.ctl.target.set(-d.W*0.08,(d.hw+d.hf)/2-1.2,-d.P*0.12);
+    T.cam.position.set(d.W*0.12,5.4,d.P*0.32);
+    T.ctl.target.set(-d.W*0.04,(d.hw+d.hf)/2-0.6,-d.P*0.18);
+    T.ctl.maxDistance=Math.max(d.W,d.P)*1.2;
+    if(T.act)T.act(true);
   }else{
     /* framed on the cover (in front of the house), not the whole house */
     const D=Math.max(d.W,d.P)*1.15+8;
     T.cam.position.set(D*0.45,D*0.42,d.P*0.15+D*0.95);T.ctl.target.set(0,4.2,d.P*0.15);T.ctl.autoRotate=true;
     T.ctl.maxDistance=D*1.5;
+    if(T.act&&T.ctl.enabled&&T.view==="out"&&T.wasUnder)T.act(false);
   }
   T.ctl.update();
   document.querySelectorAll("#views .opt").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));
