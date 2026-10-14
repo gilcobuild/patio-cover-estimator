@@ -370,6 +370,8 @@ function applyPricebook(v){
 }
 /* Price gate (customer build): price stays hidden until the customer enters name, email, phone and a service-area address.
    They then see a price range; the exact itemized quote is emailed. The back office always shows exact numbers. */
+try{if("scrollRestoration" in history)history.scrollRestoration="manual"}catch(_){}
+window.addEventListener("load",()=>{if(!location.hash)window.scrollTo(0,0)});
 let GATE=true;let UNLOCK=false;try{UNLOCK=localStorage.getItem("gilcoUnlocked")==="1"}catch(_){}
 const SERVICE_ZIP=/^70[01]\d\d$/;
 const EMAIL_OK=e=>/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(e||"");
@@ -381,7 +383,7 @@ function unlockWith(email){
 }
 function priceRange(v){const lo=Math.floor(v*0.92/250)*250,hi=Math.ceil(v*1.08/250)*250;return [lo,hi]}
 const rangeTxt=v=>{const [a,b]=priceRange(v);return money(a)+"–"+money(b)};
-const S={sized:false,roof:"wpan",mount:"att",color:"White",fans:0,base:"have",ds:["R"],tier:"vg",term:60};
+const S={sized:false,pk:{p:false,w:false},roof:"wpan",mount:"att",color:"White",fans:0,base:"have",ds:["R"],tier:"vg",term:60};
 const $=id=>document.getElementById(id);
 const money=n=>"$"+Math.round(n).toLocaleString("en-US");
 
@@ -434,8 +436,8 @@ function drawPlan(c){
   const n=Math.ceil(c.w/10)+1, rows=c.free?[y,y+rh]:[y+rh];
   rows.forEach(py=>{for(let i=0;i<n;i++){const px=x+rw*i/(n-1);s+=`<rect x="${px-4}" y="${py-4}" width="8" height="8" fill="${ink}"/>`}});
   dsList(c.w).forEach(i=>{const px=x+rw*i/(n-1);s+=`<circle cx="${px}" cy="${y+rh+10}" r="4" fill="none" stroke="${br}" stroke-width="2"/>`});
-  s+=`<text x="${W/2}" y="${y+rh+22}" text-anchor="middle" font-size="12" fill="${ink}" font-family="IBM Plex Mono,monospace">${c.w}' wide</text>`;
-  s+=`<text x="${x-10}" y="${y+rh/2}" text-anchor="end" dominant-baseline="middle" font-size="12" fill="${ink}" font-family="IBM Plex Mono,monospace">${c.p}'</text>`;
+  s+=`<text x="${W/2}" y="${y+rh+22}" text-anchor="middle" font-size="12" fill="${ink}" font-family="IBM Plex Mono,monospace">${S.pk.w||S.sized?c.w+"'":"?"} wide</text>`;
+  s+=`<text x="${x-10}" y="${y+rh/2}" text-anchor="end" dominant-baseline="middle" font-size="12" fill="${ink}" font-family="IBM Plex Mono,monospace">${S.pk.p||S.sized?c.p+"'":"?"}</text>`;
   $("plan").innerHTML=s;
 }
 
@@ -443,13 +445,14 @@ function buildList(id,input,start,max){
   const el=$(id);let h="";
   for(let v=start;v<=max;v+=2)h+=`<button type="button" role="option" data-v="${v}">${v}'</button>`;
   el.innerHTML=h;
-  el.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{$(input).value=b.dataset.v;S.sized=true;render()}));
+  el.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{$(input).value=b.dataset.v;S.pk[input]=true;S.sized=S.pk.p&&S.pk.w;render();
+    if(S.sized)$("sizeChg").textContent="Close ▴"}));
 }
 function syncPicker(){
   [["listP","p"],["listW","w"]].forEach(([id,inp])=>{
-    $(id).querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",S.sized&&b.dataset.v===$(inp).value));
+    $(id).querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",(S.sized||S.pk[inp])&&b.dataset.v===$(inp).value));
   });
-  $("sizeLabel").textContent=S.sized?`${$("p").value}' × ${$("w").value}'`:"–' × –'";
+  $("sizeLabel").textContent=`${S.pk.p||S.sized?$("p").value:"–"}' × ${S.pk.w||S.sized?$("w").value:"–"}'`;
   if(!S.sized&&$("picker").hidden)$("sizeChg").textContent="Choose size ▾";
 }
 function scrollToSel(){
@@ -706,7 +709,7 @@ function render(){
   drawPlan(c);
   schedule3d(c);
   const hs=$("hdrSell");hs.className="";
-  if(!S.sized){hs.textContent=money(0);$("hdrMeta").textContent="Pick a size"}
+  if(!S.sized){hs.textContent=money(0);$("hdrMeta").textContent=S.pk.p?"Pick a width":S.pk.w?"Pick out from house":"Pick a size"}
   else if(GATE&&!UNLOCK){hs.textContent="See price";hs.className="ask";$("hdrMeta").textContent=`${c.p}' × ${c.w}' · enter email above`}
   else if(PRIZE&&PRIZE.applied){hs.textContent=money(netSell(c));$("hdrMeta").innerHTML=`${c.p}' × ${c.w}' · <s>${money(c.sell)}</s> ${esc(PRIZE.t)}`}
   else if(PRIZE){hs.textContent=money(c.sell);$("hdrMeta").textContent=`${c.p}' × ${c.w}' · ${PRIZE.t} won`}
