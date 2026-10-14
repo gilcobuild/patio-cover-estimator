@@ -709,7 +709,7 @@ function render(){
   if(!S.sized){hs.textContent=money(0);$("hdrMeta").textContent="Pick a size"}
   else if(GATE&&!UNLOCK){hs.textContent="See price";hs.className="ask";$("hdrMeta").textContent=`${c.p}' × ${c.w}' · enter email above`}
   else if(PRIZE&&PRIZE.applied){hs.textContent=money(netSell(c));$("hdrMeta").innerHTML=`${c.p}' × ${c.w}' · <s>${money(c.sell)}</s> ${esc(PRIZE.t)}`}
-  else if(PRIZE){hs.textContent=money(c.sell);$("hdrMeta").textContent=`${c.p}' × ${c.w}' · ${PRIZE.t} won, finish quote`}
+  else if(PRIZE){hs.textContent=money(c.sell);$("hdrMeta").textContent=`${c.p}' × ${c.w}' · ${PRIZE.t} won`}
   else{hs.textContent=money(c.sell);$("hdrMeta").textContent=`${c.p}' × ${c.w}' · ${money(c.sell/c.sf)}/sf`}
   const pzOn=GATE&&UNLOCK&&S.sized;$("prizeBox").hidden=!pzOn;if(pzOn){pzOdds();pzShow(false)}else{$("pzHint").hidden=true}
   const roofName={wpan:"W-pan aluminum roof",flat:"Flat pan aluminum roof",insul:'3" insulated aluminum roof'}[S.roof];
