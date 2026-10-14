@@ -31,6 +31,8 @@ header .brand{flex:1 1 0;min-width:0}
 .hdrprice .hp-l{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .hdrprice b{font-family:var(--display);font-weight:700;font-size:32px;color:var(--price);font-variant-numeric:tabular-nums;transition:color .2s}
 .egate{border:2px solid var(--bronze);background:var(--bronze-soft)}.eg-row{display:flex;gap:8px;flex-wrap:wrap}.eg-row input{flex:1 1 200px}.eg-row .btn{flex:0 0 auto}
+.hdrprice b.mo small{font-size:15px;font-weight:600;margin-left:1px}
+.hdrprice .hp-m b.tot{font-family:var(--body);font-size:12px;font-weight:700;color:var(--ink)}
 .hdrprice b.rng{font-size:24px}.hdrprice b.ask{font-size:22px;color:var(--bronze)}
 @media (max-width:420px){.hdrprice b.rng{font-size:20px}.hdrprice b.ask{font-size:18px}}
 .hdrprice .hp-m{font-family:var(--mono);font-size:11px;color:var(--muted)}
@@ -210,7 +212,7 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
 <div class="wrap">
   <header>
     <div class="brand">Gilco Home Services, LLC<small>Aluminum Patio Covers</small></div>
-    <div class="hdrprice" aria-live="polite"><span class="hp-l">Your price</span><b id="hdrSell">$0</b><span class="hp-m" id="hdrMeta"></span><button class="finbtn" id="finBtn" type="button">Financing</button></div>
+    <div class="hdrprice" aria-live="polite"><span class="hp-l" id="hdrLbl">Your price</span><b id="hdrSell">$0</b><span class="hp-m" id="hdrMeta"></span><button class="finbtn" id="finBtn" type="button">Financing</button></div>
   </header>
 
   <section class="panel egate" id="emailGate" hidden>
@@ -714,6 +716,16 @@ function render(){
   else if(PRIZE&&PRIZE.applied){hs.textContent=money(netSell(c));$("hdrMeta").innerHTML=`${c.p}' × ${c.w}' · <s>${money(c.sell)}</s> ${esc(PRIZE.t)}`}
   else if(PRIZE){hs.textContent=money(c.sell);$("hdrMeta").textContent=`${c.p}' × ${c.w}' · ${PRIZE.t} won`}
   else{hs.textContent=money(c.sell);$("hdrMeta").textContent=`${c.p}' × ${c.w}' · ${money(c.sell/c.sf)}/sf`}
+  /* customer app: lead with the monthly payment; total price shown smaller under it, with the loan terms (APR, months) right there */
+  $("hdrLbl").textContent="Your price";
+  if(GATE&&UNLOCK&&S.sized){
+    const t=tierOf(),net=netSell(c),m=pmt(net,t[2],S.term);
+    $("hdrLbl").textContent="Est. monthly";
+    hs.className="mo";hs.innerHTML=`${money(m)}<small>/mo</small>`;
+    const pz=PRIZE?(PRIZE.applied?` · <s>${money(c.sell)}</s>`:` · ${esc(PRIZE.t)} won`):"";
+    $("hdrMeta").innerHTML=`<b class="tot">${money(net)}</b> total${pz}`;
+    $("finBtn").textContent=`${S.term} mo · ${t[2].toFixed(2)}% APR est. · Details`;
+  }
   const pzOn=GATE&&UNLOCK&&S.sized;$("prizeBox").hidden=!pzOn;if(pzOn){pzOdds();pzShow(false)}else{$("pzHint").hidden=true}
   const roofName={wpan:"W-pan aluminum roof",flat:"Flat pan aluminum roof",insul:'3" insulated aluminum roof'}[S.roof];
   const sc=scope(c);
