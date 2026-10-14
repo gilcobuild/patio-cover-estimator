@@ -512,7 +512,7 @@ function setView(v){
     T.ctl.target.set(-d.W*0.08,(d.hw+d.hf)/2-1.2,-d.P*0.12);
   }else{
     /* framed on the cover (in front of the house), not the whole house */
-    const D=Math.max(d.W,d.P)*0.95+7;
+    const D=Math.max(d.W,d.P)*1.15+8;
     T.cam.position.set(D*0.45,D*0.42,d.P*0.15+D*0.95);T.ctl.target.set(0,4.2,d.P*0.15);T.ctl.autoRotate=true;
     T.ctl.maxDistance=D*1.5;
   }
