@@ -718,7 +718,7 @@ function render(){
   const roofName={wpan:"W-pan aluminum roof",flat:"Flat pan aluminum roof",insul:'3" insulated aluminum roof'}[S.roof];
   const sc=scope(c);
   $("incl").innerHTML=`<tr class="grp"><td>Included</td></tr>`+sc.inc.map(r=>`<tr><td><span class="mk yes">✓</span>${r}</td></tr>`).join("")
-    +`<tr class="grp"><td>Not included</td></tr>`+sc.exc.map(r=>`<tr><td><span class="mk no">✕</span>${r}</td></tr>`).join("");
+;  /* "Not included" list lives on the PDF quote / contract, not on the app screen */
     return c;
 }
 
