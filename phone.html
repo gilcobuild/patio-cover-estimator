@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Gilco App on iPhone</title>
+<style>
+:root{color-scheme:light}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:radial-gradient(circle at 50% 30%,#3a434c,#171b1f 70%);font:14px system-ui,-apple-system,"Segoe UI",sans-serif;color:#c9d1d8;display:grid;place-items:center;padding:16px;overflow:auto}
+.wrap{display:grid;gap:14px;justify-items:center}
+.cap{text-align:center;font-size:13px;letter-spacing:.04em}
+.cap b{display:block;color:#fff;font-size:15px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
+/* iPhone 15-style frame: 393 x 852 screen */
+.phone{position:relative;width:417px;height:876px;border-radius:64px;background:#1b1d20;padding:12px;
+  box-shadow:0 0 0 2px #4a4f55,0 0 0 5px #121417,0 30px 60px rgba(0,0,0,.55),inset 0 0 3px rgba(255,255,255,.25)}
+.phone::before,.phone::after{content:"";position:absolute;width:4px;background:#2b2f34;border-radius:2px}
+.phone::before{left:-6px;top:170px;height:60px;box-shadow:0 80px 0 #2b2f34}
+.phone::after{right:-6px;top:220px;height:96px}
+.screen{position:relative;width:393px;height:852px;border-radius:52px;overflow:hidden;background:#fff}
+.status{position:absolute;left:0;top:0;right:0;height:54px;background:#f7f8f9;display:flex;justify-content:space-between;align-items:center;padding:6px 34px 0 46px;font:600 16px -apple-system,system-ui,sans-serif;color:#111;z-index:2}
+.status i{font-style:normal;font-size:13px;letter-spacing:1px}
+.screen iframe{position:absolute;left:0;top:54px;width:393px;height:764px;border:0;background:#fff}
+.home{position:absolute;left:0;right:0;bottom:0;height:34px;background:#f7f8f9;z-index:2}
+.island{position:absolute;left:50%;top:11px;width:124px;height:36px;margin-left:-62px;border-radius:20px;background:#000;z-index:3;pointer-events:none}
+.bar{position:absolute;left:50%;bottom:8px;width:136px;height:5px;margin-left:-68px;border-radius:3px;background:#111;z-index:3;pointer-events:none;opacity:.85}
+@media (max-height:930px){.phone{transform:scale(calc((100vh - 90px)/876));transform-origin:top center;margin-bottom:calc((100vh - 90px) - 876px)}}
+</style>
+</head><body>
+<div class="wrap">
+  <div class="cap"><b>Gilco Patio Cover App</b>iPhone preview · tap and scroll like a phone</div>
+  <div class="phone"><div class="screen">
+    <div class="island"></div>
+    <div class="status"><span>9:41</span><i>▂▄▆ ᯤ ▮▮▮</i></div>
+    <iframe src="preview.html" title="Gilco app on iPhone"></iframe>
+    <div class="home"></div><div class="bar"></div>
+  </div></div>
+</div>
+</body></html>
