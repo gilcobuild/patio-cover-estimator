@@ -289,6 +289,8 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
     <div class="label">Term</div>
     <div class="terms" id="termPick"></div>
     <p class="fine" id="finNote"></p>
+    <button class="btn" id="finApply" type="button">Apply for financing</button>
+    <p class="pzhint" id="finApplyMsg" hidden></p>
   </section>
 
   <section class="panel" id="custView">
@@ -917,10 +919,15 @@ $("viewPdf").onclick=()=>{$("sheetTitle").textContent="Quote preview";buildSheet
 $("closePdf").onclick=()=>{$("pdfView").hidden=true;$("viewPdf").focus()};
 $("pdfView").addEventListener("click",e=>{if(e.target===$("pdfView"))$("pdfView").hidden=true});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("pdfView").hidden)$("pdfView").hidden=true});
+/* Apply for financing: placeholder until a lender is connected (roadmap). Marks the quote so the office knows they want financing. */
+$("finApply").onclick=()=>{S.finWant=true;const m=$("finApplyMsg");m.hidden=false;
+  m.innerHTML="<b>Financing approval is coming soon.</b> Finish your quote below and we'll send you the application with your quote filled in.";
+  $("finApply").textContent="Financing requested ✓";
+  setTimeout(()=>$("cname").scrollIntoView({behavior:"smooth",block:"center"}),900)};
 $("finBtn").onclick=()=>{$("finPanel").scrollIntoView({behavior:"smooth",block:"start"})};
 
 render();
 </script>
 
-<script src="photos.js?v=9"></script>
+<script src="photos.js?v=10"></script>
 </body></html>

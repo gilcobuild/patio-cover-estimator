@@ -143,7 +143,7 @@ if(book&&step){
     try{if(typeof SERVICE_ZIP!=="undefined"&&GATE&&!SERVICE_ZIP.test(document.getElementById("czip").value.trim()))return}catch(_){}
     const c=calc(), w=+document.getElementById("w").value, g=id=>document.getElementById(id).value.trim();
     const body={cust:{name:g("cname"),phone:g("cphone"),email:g("cemail"),addr:g("caddr"),city:g("ccity"),state:g("cstate").toUpperCase(),zip:g("czip")},
-      cfg:{w,p:+document.getElementById("p").value,roof:S.roof,mount:S.mount,color:S.color,fans:S.fans,base:S.base,ds:S.ds,tier:S.tier,term:S.term},
+      cfg:{w,p:+document.getElementById("p").value,roof:S.roof,mount:S.mount,color:S.color,fans:S.fans,base:S.base,ds:S.ds,tier:S.tier,term:S.term,fin:!!S.finWant},
       sell:(typeof netSell==="function"?netSell(c):c.sell),install:g("cdate")};
     let tok=null;try{tok=localStorage.getItem("gilcoQuoteToken")}catch(_){}
     step.hidden=false;step.innerHTML=`<p class="hint">Saving your quote…</p>`;
