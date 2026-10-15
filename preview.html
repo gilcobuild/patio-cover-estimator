@@ -721,7 +721,7 @@ function render(){
   if(GATE&&UNLOCK&&S.sized){
     const t=tierOf(),net=netSell(c),m=pmt(net,t[2],S.term);
     $("hdrLbl").textContent="Est. monthly";
-    hs.className="mo";hs.innerHTML=`${money(m)}<small>/mo</small>`;
+    hs.className="mo";hs.textContent=money(m);
     const pz=PRIZE?(PRIZE.applied?` · <s>${money(c.sell)}</s>`:` · ${esc(PRIZE.t)} won`):"";
     $("hdrMeta").innerHTML=`<b class="tot">${money(net)}</b> total${pz}`;
     $("finBtn").textContent=`${S.term} mo · ${t[2].toFixed(2)}% APR est. · Details`;
