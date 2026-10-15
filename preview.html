@@ -887,7 +887,7 @@ function buildSheet(){
   <div class="sh-lbl">Included</div><ul>${sc.inc.map(x=>`<li class="y"><i>✓</i>${esc(x)}</li>`).join("")}</ul>
   <div class="sh-lbl">Not included</div><ul>${sc.exc.map(x=>`<li class="n"><i>✕</i>${esc(x)}</li>`).join("")}</ul>
   ${pzOn2?`<div class="sh-two" style="margin-top:14px"><div>Patio cover, installed</div><div style="text-align:right">${money(c.sell)}</div><div>Online prize: ${esc(PRIZE.t)}</div><div style="text-align:right">−${money(pzOff2)}</div></div>`:""}
-  <div class="sh-price"><div><div style="font-size:10px;font-weight:700;letter-spacing:.1em">TOTAL INSTALLED PRICE</div><small>${c.sf} sq ft · ${money(net2/c.sf)} per sq ft · Price confirmed at site visit</small></div><b>${money(net2)}</b></div>
+  ${(()=>{const t=tierOf(),m=pmt(net2,t[2],S.term);return `<div class="sh-price"><div><div style="font-size:10px;font-weight:700;letter-spacing:.1em">ESTIMATED MONTHLY PAYMENT</div><small>Total installed price ${money(net2)} · ${S.term} months at ${t[2].toFixed(2)}% APR<br>Estimated, based on approved financing · Price confirmed at site visit</small></div><b>${money(m)}<span style="font-size:15px;font-weight:600">/mo</span></b></div>`})()}
   <div style="font-size:10.5px;color:#5d6872;margin-top:6px">${esc(finLine({...c,sell:net2}))}</div>
   <div class="sh-lbl">Terms</div>
   <ul><li>• 50% deposit at signing to order materials. Balance due on completion.</li>
