@@ -128,6 +128,8 @@ function showSpot(el,spot){ /* read-only map for the installer */
 window.GilcoPhotos={rpc,mount,mountSpot,showSpot,SLOTS};
 /* estimator: load the saved supplier price list so website prices match the back office */
 /* estimator: load the live prize list + odds so the wheel matches what the server picks from */
+/* estimator: the salesman contact card details from the back office */
+if(typeof setContact==="function"){rpc("pc_contact",{}).then(v=>{try{setContact(v)}catch(_){}}).catch(()=>{})}
 if(typeof setPrizes==="function"){rpc("pc_prizes",{}).then(v=>{try{setPrizes(v)}catch(_){}}).catch(()=>{})}
 if(typeof applyPricebook==="function"){rpc("pc_pricebook",{}).then(v=>{try{if(applyPricebook(v))render()}catch(_){}}).catch(()=>{})}
 /* estimator: capture the email lead as soon as it's entered at the top */
