@@ -182,6 +182,19 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
 .seg.three{grid-template-columns:1fr}.row2,.rates{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 .chk1{display:inline-flex;align-items:center;gap:6px;font-size:14px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
+.cm-tot{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.cm-tot div{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--panel)}
+.cm-tot b{display:block;font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.cm-tot span{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.cm-rep{border:1px solid var(--line);border-radius:12px;background:var(--panel);display:grid;gap:10px;padding:12px}
+.cm-hd{display:flex;align-items:center;gap:10px}.cm-hd .rep-ph{width:46px;height:46px;border-width:2px}
+.cm-hd b{font-size:16px}.cm-hd small{display:block;color:var(--muted);font-size:12px}
+.cm-nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;text-align:center}
+.cm-nums div{background:var(--bg);border-radius:8px;padding:6px 4px}.cm-nums b{display:block;font-variant-numeric:tabular-nums;font-size:15px}.cm-nums span{font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.cm-nums .owed b{color:var(--warn)}
+.cm-set{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13px}.cm-set input{width:70px}.cm-set select{width:auto}
+.cm-jobs{width:100%;border-collapse:collapse;font-size:13px}.cm-jobs td{padding:6px 2px;border-top:1px solid var(--line);vertical-align:middle}.cm-jobs td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cm-st{font-size:11px;font-weight:700;border-radius:999px;padding:2px 8px;white-space:nowrap}.cm-st.p{background:var(--bg);color:var(--muted)}.cm-st.o{background:#fbecd9;color:var(--warn)}.cm-st.d{background:#e3f1e8;color:var(--ok)}
 .ptab{width:100%;border-collapse:collapse;font-size:13.5px}.ptab td{padding:6px 2px;border-bottom:1px solid var(--line);vertical-align:middle}.ptab td.n{text-align:right;width:110px}.ptab input{width:100px;text-align:right}.ptab .q{color:var(--muted);font-size:12px}
 .pzbox{border:2px solid var(--bronze);border-radius:12px;background:var(--bronze-soft);padding:16px;display:grid;gap:12px;justify-items:center;text-align:center;margin-top:6px}
 .pzbox h2{margin:0}.pzsub{margin:0;color:var(--muted);font-size:14px;max-width:44ch}
@@ -916,7 +929,7 @@ function contactCard(rp,sample){
       ${offices?`<div class="rep-grp">Gilco Home Services offices</div>${offices}`:""}
     </div></div>`;
 }
-function drawContact(){const el=$("repCard");if(el&&!el.hidden)el.innerHTML=contactCard(REP_PICK);if(typeof renderReps==="function")renderRepPrev()}
+function drawContact(){const el=$("repCard");if(el&&!el.hidden)el.innerHTML=contactCard(REP_PICK);if(typeof renderReps==="function")renderRepPrev();if(typeof renderComm==="function")try{renderComm()}catch(_){}}
 $("book").addEventListener("submit",e=>{
   e.preventDefault();
   if(!S.sized){togglePicker(true);$("sizeBtn").scrollIntoView({behavior:"smooth",block:"center"});$("sizeChg").textContent="Pick a size first";return}
