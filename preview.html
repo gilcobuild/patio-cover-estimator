@@ -369,7 +369,7 @@ const DEFAULTS={
 };
 const RATE_LABELS={
   panel_wpan:"W-pan panel $/sf", panel_flat:"Flat pan panel $/sf", panel_insul:"Insulated panel $/sf",
-  gutter_lf:"Front beam/gutter $/lf", ledger_lf:"Fascia header + flashing $/lf", post_ea:"Post $/ea",
+  gutter_lf:"Beam over posts + gutter $/lf", ledger_lf:"Fascia header + flashing $/lf", post_ea:"Post $/ea",
   anchor_ea:"Post base + slab anchors $/ea", downspout_ea:"Downspout $/ea", trim_lf:"Trim/end caps $/lf",
   fastener_sf:"Fasteners/sealant $/sf", fanbeam:"Fan/light beam $", labor_sf:"Install labor $/sf",
   labor_insul_sf:"Insulated labor $/sf", labor_min:"Labor minimum $", slab_sf:'New 4" slab $/sf (sub)', delivery:"Delivery $",
@@ -417,8 +417,8 @@ function calc(ow,op){
   const L=(name,qty,unit,rate)=>[name,`${qty} ${unit} × $${(+rate).toFixed(2)}`,qty*rate,qty,unit,rate];
   const items=[
     L(roofName,sf,"sf",panelRate),
-    L("Front beam / gutter",w,"lf",R.gutter_lf),
-    free?L("Rear beam",w,"lf",R.gutter_lf):L("Fascia header + flashing",w,"lf",R.ledger_lf),
+    L("2x6 beam over posts + front gutter",w,"lf",R.gutter_lf),
+    free?L("Rear 2x6 beam over posts",w,"lf",R.gutter_lf):L("Fascia header + flashing",w,"lf",R.ledger_lf),
     L("Aluminum posts",posts,"ea",R.post_ea),
     L("Post bases + slab anchors",posts,"ea",R.anchor_ea),
     L("Downspout + elbows + splash block",ds,"ea",R.downspout_ea),
@@ -670,6 +670,7 @@ function scope(c){
     `${c.p}' × ${c.w}' ${roofName}, ${S.color}`,
     c.free?"Freestanding frame with front and rear beams":"Attached to the house fascia board with a flashed header",
     `${c.posts} aluminum posts anchored to the ${S.base==="new"?"new":"existing"} slab`,
+    `2x6 aluminum beam across the top of the posts`,
     ...(S.base==="new"?[`New 4" concrete slab, ${c.p}' × ${c.w}'`]:[]),
     "Fascia cover trim on both sloped sides",
     "Front gutter with "+(()=>{const d=dsList(c.w);return d.length+" downspout"+(d.length>1?"s":"")+" ("+d.map(i=>postName(i,Math.ceil(c.w/10)+1)).join(", ").toLowerCase()+") with splash blocks"})(),
