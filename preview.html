@@ -390,7 +390,8 @@ function applyPricebook(v){
 try{if("scrollRestoration" in history)history.scrollRestoration="manual"}catch(_){}
 window.addEventListener("load",()=>{if(!location.hash)window.scrollTo(0,0)});
 let GATE=true;let UNLOCK=false;try{UNLOCK=localStorage.getItem("gilcoUnlocked")==="1"}catch(_){}
-const SERVICE_ZIP=/^70[01]\d\d$/;
+/* service area: Southshore 700/701, Northshore 704, Baton Rouge 707/708 */
+const SERVICE_ZIP=/^70[01478]\d\d$/;
 const EMAIL_OK=e=>/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(e||"");
 function unlockWith(email){
   UNLOCK=true;try{localStorage.setItem("gilcoUnlocked","1");localStorage.setItem("gilcoEmail",email)}catch(_){}
@@ -920,7 +921,7 @@ $("book").addEventListener("submit",e=>{
   e.preventDefault();
   if(!S.sized){togglePicker(true);$("sizeBtn").scrollIntoView({behavior:"smooth",block:"center"});$("sizeChg").textContent="Pick a size first";return}
   if(GATE&&!SERVICE_ZIP.test($("czip").value.trim())){$("quoteOut").hidden=false;$("pdfBtns").hidden=true;
-    $("quoteFlag").innerHTML="We currently install in the greater New Orleans area (ZIP codes starting 700 or 701). Check your ZIP code, or call us and we'll see if we can help.";
+    $("quoteFlag").innerHTML="We currently install in the New Orleans area, the Northshore and Baton Rouge. Check your ZIP code, or call us and we'll see if we can help.";
     $("czip").focus();return}
   if(GATE&&!UNLOCK){unlockWith($("cemail").value.trim())}
   if(PRIZE&&!PRIZE.applied){PRIZE.applied=true;savePrize()}
