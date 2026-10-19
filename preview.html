@@ -365,7 +365,7 @@ const DEFAULTS={
   gutter_lf:15, ledger_lf:6, post_ea:90, anchor_ea:35, downspout_ea:45,
   trim_lf:4, fastener_sf:0.40, fanbeam:150,
   labor_sf:4.50, labor_insul_sf:5.75, labor_min:900,
-  slab_sf:9, delivery:150, contingency_pct:5, overhead_pct:15, profit_pct:30, promo_max:500
+  slab_sf:9, delivery:150, contingency_pct:5, overhead_pct:15, profit_pct:30, promo_max:500, min_profit:1000
 };
 const RATE_LABELS={
   panel_wpan:"W-pan panel $/sf", panel_flat:"Flat pan panel $/sf", panel_insul:"Insulated panel $/sf",
@@ -373,7 +373,7 @@ const RATE_LABELS={
   anchor_ea:"Post base + slab anchors $/ea", downspout_ea:"Downspout $/ea", trim_lf:"Trim/end caps $/lf",
   fastener_sf:"Fasteners/sealant $/sf", fanbeam:"Fan/light beam $", labor_sf:"Install labor $/sf",
   labor_insul_sf:"Insulated labor $/sf", labor_min:"Labor minimum $", slab_sf:'New 4" slab $/sf (sub)', delivery:"Delivery $",
-  contingency_pct:"Contingency %", overhead_pct:"Overhead + ads %", profit_pct:"Profit % after discount", promo_max:"Discount room $ (largest prize)"
+  contingency_pct:"Contingency %", overhead_pct:"Overhead + ads %", profit_pct:"Profit % after discount", promo_max:"Discount room $ (largest prize)", min_profit:"Minimum profit $ per job (after prize)"
 };
 let R={...DEFAULTS};
 let PF_JOB=null; /* back office: profit % for the job that is open (null = default) */
@@ -440,7 +440,10 @@ function calc(ow,op){
   const keep=1-(R.overhead_pct+(PF_JOB??R.profit_pct))/100;
   /* price leaves room for the largest prize: after that discount the job still makes the target profit */
   const promo=Math.max(0,+R.promo_max||0);
-  const sell=Math.ceil((job/Math.max(keep,0.05)+promo)/25)*25;
+  let sell=Math.ceil((job/Math.max(keep,0.05)+promo)/25)*25;
+  /* small jobs: never less than the minimum profit, even after the largest prize */
+  const oh=R.overhead_pct/100, minP=Math.max(0,+R.min_profit||0), floor=Math.ceil(((job+minP)/Math.max(1-oh,0.05)+promo)/25)*25;
+  if(sell<floor)sell=floor;
   const over=sell*R.overhead_pct/100, profit=sell-job-over;
   return {w,p,sf,posts,items,mat,labor,slab,cont,job,sell,over,profit,free};
 }
