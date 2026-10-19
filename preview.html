@@ -423,6 +423,10 @@ function unlockWith(email){
 }
 function priceRange(v){const lo=Math.floor(v*0.92/250)*250,hi=Math.ceil(v*1.08/250)*250;return [lo,hi]}
 const rangeTxt=v=>{const [a,b]=priceRange(v);return money(a)+"–"+money(b)};
+/* Ad tracking: keep the first utm tag a visitor arrived with (first touch), saved on the quote as cust.src */
+window.AD_SRC=(function(){let v="";try{const u=new URLSearchParams(location.search),src=u.get("utm_source");
+  if(src){v=[src,u.get("utm_medium"),u.get("utm_campaign"),u.get("utm_content")].map(x=>(x||"").replace(/[^\w.-]/g,"").slice(0,40)).join("|");}
+  const old=localStorage.getItem("gilcoSrc");if(old){v=old}else if(v){localStorage.setItem("gilcoSrc",v)}}catch(_){}return v})();
 const S={sized:false,pk:{p:false,w:false},roof:"wpan",mount:"att",color:"White",fans:0,base:"have",ds:["R"],tier:"vg",term:60};
 const $=id=>document.getElementById(id);
 const money=n=>"$"+Math.round(n).toLocaleString("en-US");

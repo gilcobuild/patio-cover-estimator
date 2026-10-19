@@ -135,7 +135,7 @@ if(typeof applyPricebook==="function"){rpc("pc_pricebook",{}).then(v=>{try{if(ap
 /* estimator: capture the email lead as soon as it's entered at the top */
 document.addEventListener("gilco:email",async e=>{
   try{const em=(e.detail&&e.detail.email)||"";if(!em)return;let tok=null;try{tok=localStorage.getItem("gilcoQuoteToken")}catch(_){}
-    const r=await rpc("pc_quote_save",{p_token:tok,p:{cust:{email:em}}});try{localStorage.setItem("gilcoQuoteToken",r.token)}catch(_){}}catch(_){}
+    const r=await rpc("pc_quote_save",{p_token:tok,p:{cust:{email:em,src:(window.AD_SRC||"")}}});try{localStorage.setItem("gilcoQuoteToken",r.token)}catch(_){}}catch(_){}
 });
 /* estimator hook: save the quote when "Get my quote" is pressed, then show the photo step */
 const book=document.getElementById("book"), step=document.getElementById("photoStep");
@@ -144,7 +144,7 @@ if(book&&step){
     try{if(typeof S==="undefined"||!S.sized)return}catch(_){return}
     try{if(typeof SERVICE_ZIP!=="undefined"&&GATE&&!SERVICE_ZIP.test(document.getElementById("czip").value.trim()))return}catch(_){}
     const c=calc(), w=+document.getElementById("w").value, g=id=>document.getElementById(id).value.trim();
-    const body={cust:{name:g("cname"),phone:g("cphone"),email:g("cemail"),addr:g("caddr"),city:g("ccity"),state:g("cstate").toUpperCase(),zip:g("czip")},
+    const body={cust:{name:g("cname"),phone:g("cphone"),email:g("cemail"),addr:g("caddr"),city:g("ccity"),state:g("cstate").toUpperCase(),zip:g("czip"),src:(window.AD_SRC||"")},
       cfg:{w,p:+document.getElementById("p").value,roof:S.roof,mount:S.mount,color:S.color,fans:S.fans,base:S.base,ds:S.ds,tier:S.tier,term:S.term,fin:!!S.finWant,rep:(typeof REP_PICK!=="undefined"&&REP_PICK?REP_PICK.id:"")},
       sell:(typeof netSell==="function"?netSell(c):c.sell),install:g("cdate")};
     let tok=null;try{tok=localStorage.getItem("gilcoQuoteToken")}catch(_){}
