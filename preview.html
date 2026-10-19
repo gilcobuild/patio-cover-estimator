@@ -181,6 +181,7 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
 @media (max-width:380px){
 .seg.three{grid-template-columns:1fr}.row2,.rates{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.chk1{display:inline-flex;align-items:center;gap:6px;font-size:14px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--panel)}
 .ptab{width:100%;border-collapse:collapse;font-size:13.5px}.ptab td{padding:6px 2px;border-bottom:1px solid var(--line);vertical-align:middle}.ptab td.n{text-align:right;width:110px}.ptab input{width:100px;text-align:right}.ptab .q{color:var(--muted);font-size:12px}
 .pzbox{border:2px solid var(--bronze);border-radius:12px;background:var(--bronze-soft);padding:16px;display:grid;gap:12px;justify-items:center;text-align:center;margin-top:6px}
 .pzbox h2{margin:0}.pzsub{margin:0;color:var(--muted);font-size:14px;max-width:44ch}
@@ -880,28 +881,41 @@ $("pzSpin").onclick=pzSpin;
 (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(pzDraw);
 if(PRIZE){pzRot=-(PRIZE.index||0)*2*Math.PI/PRIZES.length}
 /* ===== Your Gilco contact card (customer): shown once the quote is in. Details come from the back office (pc_contact). ===== */
-const CONTACT_DEF={rep_name:"Steve",rep_title:"Patio Cover Specialist",rep_cell:"",rep_email:"sbgilco@gmail.com",photo:"",br:"",ns:"",ss:""};
-let CONTACT={...CONTACT_DEF};
+const REP_DEF={id:"r1",name:"Steve",title:"Patio Cover Specialist",cell:"",email:"sbgilco@gmail.com",photo:"",areas:["ss","ns","br"],active:true};
+let CONTACT={br:"",ns:"",ss:"",reps:[{...REP_DEF}]};
+let REP_PICK=null; /* salesman shown to this customer (saved with the quote) */
+const AREA_NAME={ss:"Southshore",ns:"Northshore",br:"Baton Rouge"};
+const zipArea=z=>/^704/.test(z||"")?"ns":/^70[78]/.test(z||"")?"br":"ss";
 const HEADSHOT=`<svg viewBox="0 0 120 120" aria-hidden="true"><rect width="120" height="120" fill="#cfd8df"/><circle cx="60" cy="47" r="22" fill="#e8c4a4"/><path d="M38 44c0-16 10-24 22-24s22 8 22 24c-4-8-12-11-22-11s-18 3-22 11z" fill="#5a4636"/><path d="M14 120c2-26 20-38 46-38s44 12 46 38z" fill="#8a5a2b"/><path d="M48 84l12 14 12-14" fill="none" stroke="#f3e9de" stroke-width="4" stroke-linejoin="round"/><rect x="52" y="68" width="16" height="16" rx="5" fill="#e8c4a4"/></svg>`;
-function setContact(v){if(v&&typeof v==="object"){CONTACT={...CONTACT_DEF,...v};drawContact()}}
-function contactCard(ct,sample){
-  const ph=/^data:image\/(jpeg|png|webp);base64,/.test(ct.photo||"")?`<img src="${ct.photo}" alt="${esc(ct.rep_name)}">`:HEADSHOT;
+function setContact(v){if(!v||typeof v!=="object")return;
+  let reps=Array.isArray(v.reps)&&v.reps.length?v.reps:[{...REP_DEF,name:v.rep_name||REP_DEF.name,title:v.rep_title||REP_DEF.title,cell:v.rep_cell||"",email:v.rep_email||REP_DEF.email,photo:v.photo||""}];
+  CONTACT={br:v.br||"",ns:v.ns||"",ss:v.ss||"",reps:reps.map((r,i)=>({...REP_DEF,...r,id:r.id||"r"+(i+1),areas:Array.isArray(r.areas)?r.areas:[]}))};
+  if(REP_PICK)REP_PICK=CONTACT.reps.find(r=>r.id===REP_PICK.id)||REP_PICK;drawContact()}
+const repById=id=>CONTACT.reps.find(r=>r.id===id);
+/* pick the salesman for a quote: active reps covering the customer's area, spread evenly by email */
+function pickRep(zip,key){const act=CONTACT.reps.filter(r=>r.active!==false), a=zipArea(zip);
+  const pool=act.filter(r=>(r.areas||[]).includes(a)), list=pool.length?pool:(act.length?act:CONTACT.reps);
+  let h=0;for(const ch of String(key||"")){h=(h*31+ch.charCodeAt(0))>>>0}return list[h%list.length]||REP_DEF}
+function contactCard(rp,sample){
+  const ct=CONTACT;rp=rp||CONTACT.reps[0]||REP_DEF;
+  const ph=/^data:image\/(jpeg|png|webp);base64,/.test(rp.photo||"")?`<img src="${rp.photo}" alt="${esc(rp.name)}">`:HEADSHOT;
   const tel=(v,smp)=>v?`<a href="tel:${esc(String(v).replace(/[^0-9+]/g,""))}">${esc(v)}</a>`:`<b class="smp">${smp}</b>`;
   /* customers only see filled-in numbers; samples show in the back office preview */
   const row=(lbl,v,smp,html)=>(v||sample)?`<div class="rep-row"><span>${lbl}</span>${html||tel(v,smp)}</div>`:"";
   const offices=row("Baton Rouge",ct.br,"(225) 555-0100")+row("Northshore",ct.ns,"(985) 555-0100")+row("Southshore",ct.ss,"(504) 555-0100");
+  const first=esc((rp.name||"your rep").split(" ")[0]);
   return `<div class="rep">
     <div class="rep-top"><div class="rep-ph">${ph}</div>
-      <div><div class="rep-nm">${esc(ct.rep_name||"Your Gilco rep")}</div><div class="rep-tt">${esc(ct.rep_title||"")}</div><div class="rep-co">Gilco Home Services, LLC</div></div></div>
-    <p class="rep-next"><b>What happens next:</b> once your quote is approved, we'll text you to set up a quick site visit with ${esc((ct.rep_name||"your rep").split(" ")[0])}. ${esc((ct.rep_name||"Your rep").split(" ")[0])} will confirm the measurements and final price before anything is ordered.</p>
+      <div><div class="rep-nm">${esc(rp.name||"Your Gilco rep")}</div><div class="rep-tt">${esc(rp.title||"")}</div><div class="rep-co">Gilco Home Services, LLC</div></div></div>
+    <p class="rep-next"><b>What happens next:</b> once your quote is approved, we'll text you to set up a quick site visit with ${first}. ${first} will confirm the measurements and final price before anything is ordered.</p>
     <div class="rep-rows">
       <div class="rep-grp">Your contact</div>
-      ${row("Cell",ct.rep_cell,"(504) 555-0199")}
-      ${row("Email",ct.rep_email,"",ct.rep_email?`<a href="mailto:${esc(ct.rep_email)}">${esc(ct.rep_email)}</a>`:`<b class="smp">name@gilco.com</b>`)}
+      ${row("Cell",rp.cell,"(504) 555-0199")}
+      ${row("Email",rp.email,"",rp.email?`<a href="mailto:${esc(rp.email)}">${esc(rp.email)}</a>`:`<b class="smp">name@gilco.com</b>`)}
       ${offices?`<div class="rep-grp">Gilco Home Services offices</div>${offices}`:""}
     </div></div>`;
 }
-function drawContact(){const el=$("repCard");if(el&&!el.hidden)el.innerHTML=contactCard(CONTACT);const o=document.getElementById("ctPrev");if(o)o.innerHTML=contactCard(CONTACT,true)}
+function drawContact(){const el=$("repCard");if(el&&!el.hidden)el.innerHTML=contactCard(REP_PICK);if(typeof renderReps==="function")renderRepPrev()}
 $("book").addEventListener("submit",e=>{
   e.preventDefault();
   if(!S.sized){togglePicker(true);$("sizeBtn").scrollIntoView({behavior:"smooth",block:"center"});$("sizeChg").textContent="Pick a size first";return}
@@ -913,7 +927,7 @@ $("book").addEventListener("submit",e=>{
   const c=render();const sc=scope(c);
   const roof={wpan:"W-Pan",flat:"Flat Pan",insul:'3" Insulated'}[S.roof];
   $("quoteOut").hidden=false;$("pdfBtns").hidden=false;
-  if(GATE){$("repCard").hidden=false;drawContact()}
+  if(GATE){REP_PICK=pickRep($("czip").value.trim(),$("cemail").value.trim().toLowerCase());$("repCard").hidden=false;drawContact()}
   $("quoteFlag").innerHTML=`<b>Your quote is ready: ${money(netSell(c))}</b>${PRIZE&&PRIZE.applied?` (includes your ${esc(PRIZE.t)} prize)`:""} for a ${c.p}' × ${c.w}' cover. Tap View PDF quote to see the full quote. The final price is confirmed at a quick site visit before anything is ordered.`;
   const calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
   requestAnimationFrame(()=>$("viewPdf").scrollIntoView({behavior:calm?"auto":"smooth",block:"center"}));
@@ -986,5 +1000,5 @@ $("finBtn").onclick=()=>{$("finPanel").scrollIntoView({behavior:"smooth",block:"
 render();
 </script>
 
-<script src="photos.js?v=11"></script>
+<script src="photos.js?v=12"></script>
 </body></html>
