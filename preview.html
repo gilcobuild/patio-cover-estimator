@@ -181,6 +181,7 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
 @media (max-width:380px){
 .seg.three{grid-template-columns:1fr}.row2,.rates{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.ptab{width:100%;border-collapse:collapse;font-size:13.5px}.ptab td{padding:6px 2px;border-bottom:1px solid var(--line);vertical-align:middle}.ptab td.n{text-align:right;width:110px}.ptab input{width:100px;text-align:right}.ptab .q{color:var(--muted);font-size:12px}
 .pzbox{border:2px solid var(--bronze);border-radius:12px;background:var(--bronze-soft);padding:16px;display:grid;gap:12px;justify-items:center;text-align:center;margin-top:6px}
 .pzbox h2{margin:0}.pzsub{margin:0;color:var(--muted);font-size:14px;max-width:44ch}
 .pzwheel{position:relative;width:min(300px,100%);aspect-ratio:1;margin-top:10px}
@@ -361,17 +362,12 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
 <script>
 const COLORS=[["Bronze","#5a4232"],["White","#f6f6f3"],["Ivory","#efe6cf"],["Sandstone","#cdb994"],["Adobe","#b9906d"]];
 const DEFAULTS={
-  panel_wpan:4.50, panel_flat:5.25, panel_insul:11.00,
-  gutter_lf:15, ledger_lf:6, post_ea:90, anchor_ea:35, downspout_ea:45,
-  trim_lf:4, fastener_sf:0.40, fanbeam:150,
+  panel_insul:11.00,
   labor_sf:4.50, labor_insul_sf:5.75, labor_min:900,
   slab_sf:9, delivery:150, contingency_pct:5, overhead_pct:15, profit_pct:30, promo_max:500, min_profit:1000
 };
 const RATE_LABELS={
-  panel_wpan:"W-pan panel $/sf", panel_flat:"Flat pan panel $/sf", panel_insul:"Insulated panel $/sf",
-  gutter_lf:"Beam over posts + gutter $/lf", ledger_lf:"Fascia header + flashing $/lf", post_ea:"Post $/ea",
-  anchor_ea:"Post base + slab anchors $/ea", downspout_ea:"Downspout $/ea", trim_lf:"Trim/end caps $/lf",
-  fastener_sf:"Fasteners/sealant $/sf", fanbeam:"Fan/light beam $", labor_sf:"Install labor $/sf",
+  panel_insul:"Insulated panel $/sf (until ASMI price)", labor_sf:"Install labor $/sf",
   labor_insul_sf:"Insulated labor $/sf", labor_min:"Labor minimum $", slab_sf:'New 4" slab $/sf (sub)', delivery:"Delivery $",
   contingency_pct:"Contingency %", overhead_pct:"Overhead + ads %", profit_pct:"Profit % after discount", promo_max:"Discount room $ (largest prize)", min_profit:"Minimum profit $ per job (after prize)"
 };
@@ -379,13 +375,13 @@ let R={...DEFAULTS};
 let PF_JOB=null; /* back office: profit % for the job that is open (null = default) */
 try{const s=JSON.parse(localStorage.getItem("gilcoRates")||"null");if(s)R={...DEFAULTS,...s}}catch(e){}
 /* Supplier price list: extra line items and fees on top of the built-in unit costs (saved centrally; the website loads it) */
-let PB={supplier:{name:"",quote:"",date:""},extras:[],fees:[]};
+let PB={supplier:{name:"",quote:"",date:""},extras:[],fees:[],parts:{}};
 const QTY_RULES={sf:["Roof area","sf"],w:["Width along house","lf"],p2:["Both sides (2 × out from house)","lf"],perim:["Both sides + front","lf"],posts:["Number of posts","ea"],ds:["Number of downspouts","ea"],fans:["Number of fan beams","ea"],job:["Once per job","job"]};
 const WHEN={all:"Every job",wpan:"W-pan roof only",flat:"Flat pan roof only",insul:"Insulated roof only",att:"Attached only",free:"Freestanding only",newslab:"New slab only",fans:"With fan beams only"};
 function applyPricebook(v){
   if(!v||typeof v!=="object")return false;
   if(v.rates)R={...DEFAULTS,...v.rates};
-  PB={supplier:v.supplier||{name:"",quote:"",date:""},extras:Array.isArray(v.extras)?v.extras:[],fees:Array.isArray(v.fees)?v.fees:[]};
+  PB={supplier:v.supplier||{name:"",quote:"",date:""},extras:Array.isArray(v.extras)?v.extras:[],fees:Array.isArray(v.fees)?v.fees:[],parts:v.parts&&typeof v.parts==="object"?v.parts:{}};
   return true;
 }
 /* Price gate (customer build): price stays hidden until the customer enters name, email, phone and a service-area address.
@@ -407,25 +403,42 @@ const S={sized:false,pk:{p:false,w:false},roof:"wpan",mount:"att",color:"White",
 const $=id=>document.getElementById(id);
 const money=n=>"$"+Math.round(n).toLocaleString("en-US");
 
+/* ===== Parts list (every piece, stock lengths, ASMI prices) -> purchase order, installer work order, partner checklist ===== */
+const PARTS0={ /* ASMI price sheet 10/2026 (defaults; back office can change prices) */
+  wpan:{n:"W panel",u:"ft",p:4.00}, flatpan:{n:"Flat panel .032",u:"sq ft",p:3.70}, plugW:{n:"Foam plugs, W pan",u:"ea",p:1.50}, plugF:{n:"Foam plugs, flat pan",u:"ea",p:2.00},
+  header:{n:"3\" wall header, 24'",u:"pcs",p:105.50}, flash:{n:"Flashing 15\"",u:"ft",p:3.50},
+  gutter:{n:"Gutter, extruded 24'",u:"pcs",p:243.30}, gcap:{n:"Gutter end caps",u:"pair",p:4.00},
+  beam:{n:"2x6 beam, extruded 24'",u:"pcs",p:275.00}, splice:{n:"Beam splice",u:"ea",p:6.00},
+  post:{n:"3x3 fluted post, 12'",u:"ea",p:60.00}, bcap:{n:"Beam caps",u:"ea",p:2.75}, pfoot:{n:"Post feet / clip",u:"ea",p:3.00}, anchor:{n:"Anchors",u:"ea",p:1.50}, bolt3:{n:"3\" bolts",u:"ea",p:1.00},
+  dpk:{n:"Downpipe kit (3 elbows, pipe, drop outlet)",u:"ea",p:30.00}, rake:{n:"Fascia roll form (side trim)",u:"ft",p:4.00},
+  fanb:{n:"2x6 roll form fan beam",u:"ft",p:8.00}, tek:{n:"Tek screws, bag of 100",u:"bag",p:12.00}, caulk:{n:"Caulk",u:"tube",p:12.00}
+};
+const partPrice=k=>{const v=PB.parts&&PB.parts[k];return v!==undefined&&v!==""&&!isNaN(+v)?+v:PARTS0[k].p};
+function partsList(c){
+  const w=c.w,p=c.p,L=Math.ceil(p+1),pc24=Math.ceil(w/24),beams=c.free?2:1,ds=dsList(w).length,out=[];
+  const add=(k,q,note)=>{if(!(q>0))return;const x={...PARTS0[k],p:partPrice(k)};out.push([x.n+(note?` (${note})`:""),`${q} ${x.u} × $${x.p.toFixed(2)}`,q*x.p,q,x.u,x.p])};
+  let panels=0;
+  if(S.roof==="wpan"){panels=Math.ceil(w);add("wpan",panels*L,`${panels} pcs at ${L}'`);add("plugW",panels*2)}
+  else if(S.roof==="flat"){panels=Math.ceil(w);add("flatpan",panels*L,`${panels} pcs at ${L}'`);add("plugF",panels*2)}
+  else{panels=Math.ceil(w/4);const sf=panels*4*L;out.push([`3" insulated roof panel (${panels} pcs at 4' × ${L}')`,`${sf} sq ft × $${(+R.panel_insul).toFixed(2)}`,sf*R.panel_insul,sf,"sq ft",+R.panel_insul])}
+  if(!c.free){add("header",pc24);add("flash",Math.ceil(w))}
+  add("gutter",pc24);add("gcap",1);
+  add("beam",pc24*beams,beams>1?"front + rear":"over the posts");add("splice",(pc24-1)*beams);
+  add("post",c.posts);add("bcap",c.posts);add("pfoot",c.posts);add("anchor",c.posts*2);add("bolt3",c.posts*2);
+  add("dpk",ds);add("rake",2*L);
+  if(S.fans>0)add("fanb",S.fans*L,`${S.fans} beam${S.fans>1?"s":""} at ${L}'`);
+  add("tek",Math.ceil((panels*(S.roof==="insul"?8:4)+c.posts*10+w*2)/100));add("caulk",Math.ceil(w/12)+1);
+  return out;
+}
+const partsTotal=list=>list.reduce((a,i)=>a+i[2],0);
 function calc(ow,op){
   const w=ow??Math.max(6,+$("w").value||0), p=op??Math.max(6,+$("p").value||0), sf=w*p;
   const free=S.mount==="free", insul=S.roof==="insul";
   const postsFront=Math.ceil(w/10)+1, posts=free?postsFront*2:postsFront;
-  const panelRate={wpan:R.panel_wpan,flat:R.panel_flat,insul:R.panel_insul}[S.roof];
-  const roofName={wpan:"W-pan roof panels",flat:"Flat pan roof panels",insul:'3" insulated roof panels'}[S.roof];
   const ds=dsList(w).length;
   const L=(name,qty,unit,rate)=>[name,`${qty} ${unit} × $${(+rate).toFixed(2)}`,qty*rate,qty,unit,rate];
-  const items=[
-    L(roofName,sf,"sf",panelRate),
-    L("2x6 beam over posts + front gutter",w,"lf",R.gutter_lf),
-    free?L("Rear 2x6 beam over posts",w,"lf",R.gutter_lf):L("Fascia header + flashing",w,"lf",R.ledger_lf),
-    L("Aluminum posts",posts,"ea",R.post_ea),
-    L("Post bases + slab anchors",posts,"ea",R.anchor_ea),
-    L("Downspout + elbows + splash block",ds,"ea",R.downspout_ea),
-    L("Fascia cover trim + end caps",2*p+w,"lf",R.trim_lf),
-    L("Fasteners + sealant",sf,"sf",R.fastener_sf)
-  ];
-  if(S.fans>0)items.push(L("Fan / light beam",S.fans,"ea",R.fanbeam));
+  /* materials = the real parts list (what goes on the purchase order) */
+  const items=partsList({w,p,free,posts});
   const qv={sf,w,p2:2*p,perim:2*p+w,posts,ds,fans:S.fans,job:1};
   const on=k=>({all:true,wpan:S.roof==="wpan",flat:S.roof==="flat",insul,att:!free,free,newslab:S.base==="new",fans:S.fans>0})[k||"all"];
   (PB.extras||[]).forEach(x=>{if(x&&String(x.name||"").trim()&&on(x.when)){const q=qv[x.rule]??1;if(q>0)items.push(L(x.name,q,(QTY_RULES[x.rule]||["","ea"])[1],+x.cost||0))}});
