@@ -31,13 +31,15 @@ header .brand{flex:1 1 0;min-width:0}
 .hdrprice .hp-l{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .hdrprice b{font-family:var(--display);font-weight:700;font-size:32px;color:var(--price);font-variant-numeric:tabular-nums;transition:color .2s}
 .egate{border:2px solid var(--bronze);background:var(--bronze-soft)}.eg-row{display:flex;gap:8px;flex-wrap:wrap}.eg-row input{flex:1 1 200px}.eg-row .btn{flex:0 0 auto}
+.hdrprice b.mo small{font-size:15px;font-weight:600;margin-left:1px}
+.hdrprice .hp-m b.tot{font-family:var(--body);font-size:12px;font-weight:700;color:var(--ink)}
 .hdrprice b.rng{font-size:24px}.hdrprice b.ask{font-size:22px;color:var(--bronze)}
 @media (max-width:420px){.hdrprice b.rng{font-size:20px}.hdrprice b.ask{font-size:18px}}
 .hdrprice .hp-m{font-family:var(--mono);font-size:11px;color:var(--muted)}
 #tabs{flex-basis:100%;justify-content:flex-end}
-@media (max-width:420px){.brand{font-size:19px}.brand small{font-size:10px;letter-spacing:.08em}.hdrprice b{font-size:26px}}
 .brand{font-family:var(--display);font-weight:700;font-size:28px;letter-spacing:.02em;line-height:1;text-transform:uppercase}
 .brand small{display:block;font-size:14px;color:var(--muted);letter-spacing:.12em;font-weight:600;margin-top:4px}
+@media (max-width:440px){.brand{font-size:17px;white-space:nowrap}.brand small{font-size:9.5px;letter-spacing:.08em}.hdrprice b{font-size:26px}.hdrprice .hp-m{font-size:9.5px}}
 .tabs{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:3px}
 .tabs button{border:0;background:none;color:var(--muted);font:600 13px var(--body);padding:7px 12px;border-radius:6px;cursor:pointer}
 .tabs button[aria-selected="true"]{background:var(--ink);color:var(--panel)}
@@ -101,7 +103,9 @@ tr.profit td{color:var(--ok);font-weight:600}
 .btns .btn{flex:1 1 160px}
 .ok{color:var(--ok);font-size:13px;font-weight:600}
 textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:10px}
-.v3d{position:relative;height:320px;border-radius:8px;overflow:hidden;background:var(--bg);touch-action:none;cursor:grab}
+.v3d{position:relative;height:320px;border-radius:8px;overflow:hidden;background:var(--bg);touch-action:pan-y;cursor:pointer;outline:2px solid transparent;outline-offset:-2px;transition:outline-color .15s}
+.v3d.on{touch-action:none;cursor:grab;outline-color:var(--bronze)}
+.v3dtip{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(29,35,41,.78);color:#fff;font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:999px;pointer-events:none;white-space:nowrap}
 .v3d canvas{display:block;width:100%!important;height:100%!important}
 .v3dmsg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:16px}
 .dspick{display:flex;flex-wrap:wrap;gap:8px}
@@ -177,6 +181,7 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
 @media (max-width:380px){
 .seg.three{grid-template-columns:1fr}.row2,.rates{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.ptab{width:100%;border-collapse:collapse;font-size:13.5px}.ptab td{padding:6px 2px;border-bottom:1px solid var(--line);vertical-align:middle}.ptab td.n{text-align:right;width:110px}.ptab input{width:100px;text-align:right}.ptab .q{color:var(--muted);font-size:12px}
 .pzbox{border:2px solid var(--bronze);border-radius:12px;background:var(--bronze-soft);padding:16px;display:grid;gap:12px;justify-items:center;text-align:center;margin-top:6px}
 .pzbox h2{margin:0}.pzsub{margin:0;color:var(--muted);font-size:14px;max-width:44ch}
 .pzwheel{position:relative;width:min(300px,100%);aspect-ratio:1;margin-top:10px}
@@ -190,6 +195,21 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
 .pzodds i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
 .pzhint{border-left:4px solid #d9a441;background:var(--bronze-soft);padding:8px 12px;border-radius:6px;font-size:14px;margin:0}
 .hdrprice .hp-m s{color:var(--muted)}
+.rep{border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden;display:grid}
+.rep-top{display:flex;gap:14px;align-items:center;padding:16px;background:var(--bronze-soft);border-bottom:3px solid var(--bronze)}
+.rep-ph{width:92px;height:92px;flex:none;border-radius:50%;overflow:hidden;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.18);background:#dfe4e8}
+.rep-ph img,.rep-ph svg{width:100%;height:100%;object-fit:cover;display:block}
+.rep-nm{font-family:var(--display);font-size:24px;font-weight:700;line-height:1.05;text-transform:uppercase;letter-spacing:.02em}
+.rep-tt{font-size:13px;color:var(--muted);font-weight:600}
+.rep-co{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--bronze);font-weight:700;margin-top:4px}
+.rep-next{margin:0;padding:12px 16px;font-size:14px;border-bottom:1px solid var(--line)}
+.rep-rows{display:grid}
+.rep-row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);font-size:14px}
+.rep-row:last-child{border-bottom:0}
+.rep-row span{color:var(--muted);font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.rep-row a,.rep-row b{color:var(--price);font-weight:700;text-decoration:none;font-variant-numeric:tabular-nums;text-align:right;overflow-wrap:anywhere}
+.rep-row .smp{color:var(--muted);font-weight:500;font-style:italic}
+.rep-grp{padding:8px 16px 4px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
 #pzfx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}
 </style>
 
@@ -208,7 +228,7 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
 <div class="wrap">
   <header>
     <div class="brand">Gilco Home Services, LLC<small>Aluminum Patio Covers</small></div>
-    <div class="hdrprice" aria-live="polite"><span class="hp-l">Your price</span><b id="hdrSell">$0</b><span class="hp-m" id="hdrMeta"></span><button class="finbtn" id="finBtn" type="button">Financing</button></div>
+    <div class="hdrprice" aria-live="polite"><span class="hp-l" id="hdrLbl">Your price</span><b id="hdrSell">$0</b><span class="hp-m" id="hdrMeta"></span><button class="finbtn" id="finBtn" type="button">Financing</button></div>
   </header>
 
   <section class="panel egate" id="emailGate" hidden>
@@ -271,11 +291,8 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
 
   <section class="panel">
     <h2>See it in 3D</h2>
-    <div class="v3d" id="v3d"><p id="v3dMsg" class="hint v3dmsg" hidden>The 3D view couldn't load. Check your connection and reload the page.</p></div>
-    <div class="seg two" id="views">
-      <button class="opt" type="button" data-v="out" aria-pressed="true"><b>Outside view</b></button>
-      <button class="opt" type="button" data-v="under" aria-pressed="false"><b>Under the cover</b></button>
-    </div>
+    <div class="v3d" id="v3d"><span class="v3dtip" id="v3dTip">Tap to spin it</span><p id="v3dMsg" class="hint v3dmsg" hidden>The 3D view couldn't load. Check your connection and reload the page.</p></div>
+    <p class="hint" style="margin:0">Tap the picture, then drag to turn it. Drag up to look under the cover.</p>
   </section>
 
 
@@ -288,6 +305,8 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
     <div class="label">Term</div>
     <div class="terms" id="termPick"></div>
     <p class="fine" id="finNote"></p>
+    <button class="btn" id="finApply" type="button">Apply for financing</button>
+    <p class="pzhint" id="finApplyMsg" hidden></p>
   </section>
 
   <section class="panel" id="custView">
@@ -300,8 +319,7 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
       <div class="pzwheel"><div class="pzptr"></div><canvas id="pzWheel" width="600" height="600" role="img" aria-label="Discount wheel"></canvas><div class="pzhub">Gilco</div></div>
       <button class="btn" id="pzSpin" type="button">Spin the wheel</button>
       <div id="pzWon" class="pzwon" hidden aria-live="polite"></div>
-      <table class="pzodds" id="pzOdds" aria-label="Prizes and odds"></table>
-      <p class="fine" style="margin:0">Odds of each prize are shown above. One prize per household, good for 7 days. The prize is a discount off the contract price and is subject to the contract's payment terms.</p>
+      <p class="fine" style="margin:0">One prize per household, good for 7 days. The prize is a discount off the contract price and is subject to the contract's payment terms.</p>
     </div>
     <h2 style="margin-top:6px">4. Pick your install day</h2>
     <p class="hint">Tell us where and when. We'll confirm the price with a quick site visit before anything is ordered.</p>
@@ -329,6 +347,7 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
       <div class="flag" id="quoteFlag">Your quote is ready.</div>
       <div class="btns" id="pdfBtns"><button class="btn" id="viewPdf" type="button">View PDF quote</button></div>
     </div>
+    <div id="repCard" hidden></div>
     <div id="photoStep" hidden></div>
   </section>
 
@@ -343,35 +362,32 @@ textarea{width:100%;min-height:140px;font:13px var(--mono);background:var(--bg);
 <script>
 const COLORS=[["Bronze","#5a4232"],["White","#f6f6f3"],["Ivory","#efe6cf"],["Sandstone","#cdb994"],["Adobe","#b9906d"]];
 const DEFAULTS={
-  panel_wpan:4.50, panel_flat:5.25, panel_insul:11.00,
-  gutter_lf:15, ledger_lf:6, post_ea:90, anchor_ea:35, downspout_ea:45,
-  trim_lf:4, fastener_sf:0.40, fanbeam:150,
+  panel_insul:11.00,
   labor_sf:4.50, labor_insul_sf:5.75, labor_min:900,
-  slab_sf:9, delivery:150, contingency_pct:5, overhead_pct:15, profit_pct:30, promo_max:500
+  slab_sf:9, delivery:150, contingency_pct:5, overhead_pct:15, profit_pct:30, promo_max:500, min_profit:1000
 };
 const RATE_LABELS={
-  panel_wpan:"W-pan panel $/sf", panel_flat:"Flat pan panel $/sf", panel_insul:"Insulated panel $/sf",
-  gutter_lf:"Front beam/gutter $/lf", ledger_lf:"Fascia header + flashing $/lf", post_ea:"Post $/ea",
-  anchor_ea:"Post base + slab anchors $/ea", downspout_ea:"Downspout $/ea", trim_lf:"Trim/end caps $/lf",
-  fastener_sf:"Fasteners/sealant $/sf", fanbeam:"Fan/light beam $", labor_sf:"Install labor $/sf",
+  panel_insul:"Insulated panel $/sf (until ASMI price)", labor_sf:"Install labor $/sf",
   labor_insul_sf:"Insulated labor $/sf", labor_min:"Labor minimum $", slab_sf:'New 4" slab $/sf (sub)', delivery:"Delivery $",
-  contingency_pct:"Contingency %", overhead_pct:"Overhead + ads %", profit_pct:"Profit % after discount", promo_max:"Discount room $ (largest prize)"
+  contingency_pct:"Contingency %", overhead_pct:"Overhead + ads %", profit_pct:"Profit % after discount", promo_max:"Discount room $ (largest prize)", min_profit:"Minimum profit $ per job (after prize)"
 };
 let R={...DEFAULTS};
 let PF_JOB=null; /* back office: profit % for the job that is open (null = default) */
 try{const s=JSON.parse(localStorage.getItem("gilcoRates")||"null");if(s)R={...DEFAULTS,...s}}catch(e){}
 /* Supplier price list: extra line items and fees on top of the built-in unit costs (saved centrally; the website loads it) */
-let PB={supplier:{name:"",quote:"",date:""},extras:[],fees:[]};
+let PB={supplier:{name:"",quote:"",date:""},extras:[],fees:[],parts:{}};
 const QTY_RULES={sf:["Roof area","sf"],w:["Width along house","lf"],p2:["Both sides (2 × out from house)","lf"],perim:["Both sides + front","lf"],posts:["Number of posts","ea"],ds:["Number of downspouts","ea"],fans:["Number of fan beams","ea"],job:["Once per job","job"]};
 const WHEN={all:"Every job",wpan:"W-pan roof only",flat:"Flat pan roof only",insul:"Insulated roof only",att:"Attached only",free:"Freestanding only",newslab:"New slab only",fans:"With fan beams only"};
 function applyPricebook(v){
   if(!v||typeof v!=="object")return false;
   if(v.rates)R={...DEFAULTS,...v.rates};
-  PB={supplier:v.supplier||{name:"",quote:"",date:""},extras:Array.isArray(v.extras)?v.extras:[],fees:Array.isArray(v.fees)?v.fees:[]};
+  PB={supplier:v.supplier||{name:"",quote:"",date:""},extras:Array.isArray(v.extras)?v.extras:[],fees:Array.isArray(v.fees)?v.fees:[],parts:v.parts&&typeof v.parts==="object"?v.parts:{}};
   return true;
 }
 /* Price gate (customer build): price stays hidden until the customer enters name, email, phone and a service-area address.
    They then see a price range; the exact itemized quote is emailed. The back office always shows exact numbers. */
+try{if("scrollRestoration" in history)history.scrollRestoration="manual"}catch(_){}
+window.addEventListener("load",()=>{if(!location.hash)window.scrollTo(0,0)});
 let GATE=true;let UNLOCK=false;try{UNLOCK=localStorage.getItem("gilcoUnlocked")==="1"}catch(_){}
 const SERVICE_ZIP=/^70[01]\d\d$/;
 const EMAIL_OK=e=>/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(e||"");
@@ -383,29 +399,46 @@ function unlockWith(email){
 }
 function priceRange(v){const lo=Math.floor(v*0.92/250)*250,hi=Math.ceil(v*1.08/250)*250;return [lo,hi]}
 const rangeTxt=v=>{const [a,b]=priceRange(v);return money(a)+"–"+money(b)};
-const S={sized:false,roof:"wpan",mount:"att",color:"White",fans:0,base:"have",ds:["R"],tier:"vg",term:60};
+const S={sized:false,pk:{p:false,w:false},roof:"wpan",mount:"att",color:"White",fans:0,base:"have",ds:["R"],tier:"vg",term:60};
 const $=id=>document.getElementById(id);
 const money=n=>"$"+Math.round(n).toLocaleString("en-US");
 
+/* ===== Parts list (every piece, stock lengths, ASMI prices) -> purchase order, installer work order, partner checklist ===== */
+const PARTS0={ /* ASMI price sheet 10/2026 (defaults; back office can change prices) */
+  wpan:{n:"W panel",u:"ft",p:4.00}, flatpan:{n:"Flat panel .032",u:"sq ft",p:3.70}, plugW:{n:"Foam plugs, W pan",u:"ea",p:1.50}, plugF:{n:"Foam plugs, flat pan",u:"ea",p:2.00},
+  header:{n:"3\" wall header, 24'",u:"pcs",p:105.50}, flash:{n:"Flashing 15\"",u:"ft",p:3.50},
+  gutter:{n:"Gutter, extruded 24'",u:"pcs",p:243.30}, gcap:{n:"Gutter end caps",u:"pair",p:4.00},
+  beam:{n:"2x6 beam, extruded 24'",u:"pcs",p:275.00}, splice:{n:"Beam splice",u:"ea",p:6.00},
+  post:{n:"3x3 fluted post, 12'",u:"ea",p:60.00}, bcap:{n:"Beam caps",u:"ea",p:2.75}, pfoot:{n:"Post feet / clip",u:"ea",p:3.00}, anchor:{n:"Anchors",u:"ea",p:1.50}, bolt3:{n:"3\" bolts",u:"ea",p:1.00},
+  dpk:{n:"Downpipe kit (3 elbows, pipe, drop outlet)",u:"ea",p:30.00}, rake:{n:"Fascia roll form (side trim)",u:"ft",p:4.00},
+  fanb:{n:"2x6 roll form fan beam",u:"ft",p:8.00}, tek:{n:"Tek screws, bag of 100",u:"bag",p:12.00}, caulk:{n:"Caulk",u:"tube",p:12.00}
+};
+const partPrice=k=>{const v=PB.parts&&PB.parts[k];return v!==undefined&&v!==""&&!isNaN(+v)?+v:PARTS0[k].p};
+function partsList(c){
+  const w=c.w,p=c.p,L=Math.ceil(p+1),pc24=Math.ceil(w/24),beams=c.free?2:1,ds=dsList(w).length,out=[];
+  const add=(k,q,note)=>{if(!(q>0))return;const x={...PARTS0[k],p:partPrice(k)};out.push([x.n+(note?` (${note})`:""),`${q} ${x.u} × $${x.p.toFixed(2)}`,q*x.p,q,x.u,x.p])};
+  let panels=0;
+  if(S.roof==="wpan"){panels=Math.ceil(w);add("wpan",panels*L,`${panels} pcs at ${L}'`);add("plugW",panels*2)}
+  else if(S.roof==="flat"){panels=Math.ceil(w);add("flatpan",panels*L,`${panels} pcs at ${L}'`);add("plugF",panels*2)}
+  else{panels=Math.ceil(w/4);const sf=panels*4*L;out.push([`3" insulated roof panel (${panels} pcs at 4' × ${L}')`,`${sf} sq ft × $${(+R.panel_insul).toFixed(2)}`,sf*R.panel_insul,sf,"sq ft",+R.panel_insul])}
+  if(!c.free){add("header",pc24);add("flash",Math.ceil(w))}
+  add("gutter",pc24);add("gcap",1);
+  add("beam",pc24*beams,beams>1?"front + rear":"over the posts");add("splice",(pc24-1)*beams);
+  add("post",c.posts);add("bcap",c.posts);add("pfoot",c.posts);add("anchor",c.posts*2);add("bolt3",c.posts*2);
+  add("dpk",ds);add("rake",2*L);
+  if(S.fans>0)add("fanb",S.fans*L,`${S.fans} beam${S.fans>1?"s":""} at ${L}'`);
+  add("tek",Math.ceil((panels*(S.roof==="insul"?8:4)+c.posts*10+w*2)/100));add("caulk",Math.ceil(w/12)+1);
+  return out;
+}
+const partsTotal=list=>list.reduce((a,i)=>a+i[2],0);
 function calc(ow,op){
   const w=ow??Math.max(6,+$("w").value||0), p=op??Math.max(6,+$("p").value||0), sf=w*p;
   const free=S.mount==="free", insul=S.roof==="insul";
   const postsFront=Math.ceil(w/10)+1, posts=free?postsFront*2:postsFront;
-  const panelRate={wpan:R.panel_wpan,flat:R.panel_flat,insul:R.panel_insul}[S.roof];
-  const roofName={wpan:"W-pan roof panels",flat:"Flat pan roof panels",insul:'3" insulated roof panels'}[S.roof];
   const ds=dsList(w).length;
   const L=(name,qty,unit,rate)=>[name,`${qty} ${unit} × $${(+rate).toFixed(2)}`,qty*rate,qty,unit,rate];
-  const items=[
-    L(roofName,sf,"sf",panelRate),
-    L("Front beam / gutter",w,"lf",R.gutter_lf),
-    free?L("Rear beam",w,"lf",R.gutter_lf):L("Fascia header + flashing",w,"lf",R.ledger_lf),
-    L("Aluminum posts",posts,"ea",R.post_ea),
-    L("Post bases + slab anchors",posts,"ea",R.anchor_ea),
-    L("Downspout + elbows + splash block",ds,"ea",R.downspout_ea),
-    L("Fascia cover trim + end caps",2*p+w,"lf",R.trim_lf),
-    L("Fasteners + sealant",sf,"sf",R.fastener_sf)
-  ];
-  if(S.fans>0)items.push(L("Fan / light beam",S.fans,"ea",R.fanbeam));
+  /* materials = the real parts list (what goes on the purchase order) */
+  const items=partsList({w,p,free,posts});
   const qv={sf,w,p2:2*p,perim:2*p+w,posts,ds,fans:S.fans,job:1};
   const on=k=>({all:true,wpan:S.roof==="wpan",flat:S.roof==="flat",insul,att:!free,free,newslab:S.base==="new",fans:S.fans>0})[k||"all"];
   (PB.extras||[]).forEach(x=>{if(x&&String(x.name||"").trim()&&on(x.when)){const q=qv[x.rule]??1;if(q>0)items.push(L(x.name,q,(QTY_RULES[x.rule]||["","ea"])[1],+x.cost||0))}});
@@ -420,7 +453,10 @@ function calc(ow,op){
   const keep=1-(R.overhead_pct+(PF_JOB??R.profit_pct))/100;
   /* price leaves room for the largest prize: after that discount the job still makes the target profit */
   const promo=Math.max(0,+R.promo_max||0);
-  const sell=Math.ceil((job/Math.max(keep,0.05)+promo)/25)*25;
+  let sell=Math.ceil((job/Math.max(keep,0.05)+promo)/25)*25;
+  /* small jobs: never less than the minimum profit, even after the largest prize */
+  const oh=R.overhead_pct/100, minP=Math.max(0,+R.min_profit||0), floor=Math.ceil(((job+minP)/Math.max(1-oh,0.05)+promo)/25)*25;
+  if(sell<floor)sell=floor;
   const over=sell*R.overhead_pct/100, profit=sell-job-over;
   return {w,p,sf,posts,items,mat,labor,slab,cont,job,sell,over,profit,free};
 }
@@ -436,8 +472,8 @@ function drawPlan(c){
   const n=Math.ceil(c.w/10)+1, rows=c.free?[y,y+rh]:[y+rh];
   rows.forEach(py=>{for(let i=0;i<n;i++){const px=x+rw*i/(n-1);s+=`<rect x="${px-4}" y="${py-4}" width="8" height="8" fill="${ink}"/>`}});
   dsList(c.w).forEach(i=>{const px=x+rw*i/(n-1);s+=`<circle cx="${px}" cy="${y+rh+10}" r="4" fill="none" stroke="${br}" stroke-width="2"/>`});
-  s+=`<text x="${W/2}" y="${y+rh+22}" text-anchor="middle" font-size="12" fill="${ink}" font-family="IBM Plex Mono,monospace">${c.w}' wide</text>`;
-  s+=`<text x="${x-10}" y="${y+rh/2}" text-anchor="end" dominant-baseline="middle" font-size="12" fill="${ink}" font-family="IBM Plex Mono,monospace">${c.p}'</text>`;
+  s+=`<text x="${W/2}" y="${y+rh+22}" text-anchor="middle" font-size="12" fill="${ink}" font-family="IBM Plex Mono,monospace">${S.pk.w||S.sized?c.w+"'":"?"} wide</text>`;
+  s+=`<text x="${x-10}" y="${y+rh/2}" text-anchor="end" dominant-baseline="middle" font-size="12" fill="${ink}" font-family="IBM Plex Mono,monospace">${S.pk.p||S.sized?c.p+"'":"?"}</text>`;
   $("plan").innerHTML=s;
 }
 
@@ -445,13 +481,14 @@ function buildList(id,input,start,max){
   const el=$(id);let h="";
   for(let v=start;v<=max;v+=2)h+=`<button type="button" role="option" data-v="${v}">${v}'</button>`;
   el.innerHTML=h;
-  el.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{$(input).value=b.dataset.v;S.sized=true;render()}));
+  el.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{$(input).value=b.dataset.v;S.pk[input]=true;S.sized=S.pk.p&&S.pk.w;render();
+    if(S.sized)$("sizeChg").textContent="Close ▴"}));
 }
 function syncPicker(){
   [["listP","p"],["listW","w"]].forEach(([id,inp])=>{
-    $(id).querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",S.sized&&b.dataset.v===$(inp).value));
+    $(id).querySelectorAll("button").forEach(b=>b.setAttribute("aria-selected",(S.sized||S.pk[inp])&&b.dataset.v===$(inp).value));
   });
-  $("sizeLabel").textContent=S.sized?`${$("p").value}' × ${$("w").value}'`:"–' × –'";
+  $("sizeLabel").textContent=`${S.pk.p||S.sized?$("p").value:"–"}' × ${S.pk.w||S.sized?$("w").value:"–"}'`;
   if(!S.sized&&$("picker").hidden)$("sizeChg").textContent="Choose size ▾";
 }
 function scrollToSel(){
@@ -476,6 +513,14 @@ function init3d(){
   T.cam=new THREE.PerspectiveCamera(40,1,0.1,600);
   T.ctl=new THREE.OrbitControls(T.cam,T.r.domElement);
   T.ctl.enableDamping=true;T.ctl.autoRotate=true;T.ctl.autoRotateSpeed=1.4;
+  /* page scrolls past the 3D view; tap it to turn spinning on, tap again (or tap elsewhere) to turn it off */
+  T.ctl.enabled=false;
+  const act=T.act=on=>{T.ctl.enabled=on;el.classList.toggle("on",on);$("v3dTip").textContent=on?"Drag to spin · tap again when done":"Tap to spin it"};
+  let pd=null;
+  el.addEventListener("pointerdown",e=>{pd={x:e.clientX,y:e.clientY,t:Date.now()}},true);
+  el.addEventListener("pointerup",e=>{if(!pd)return;const moved=Math.hypot(e.clientX-pd.x,e.clientY-pd.y),quick=Date.now()-pd.t<400;pd=null;
+    if(moved<8&&quick)act(!T.ctl.enabled)},true);
+  document.addEventListener("pointerdown",e=>{if(T.ctl.enabled&&!el.contains(e.target))act(false)});
   T.ctl.maxPolarAngle=Math.PI*0.88;T.ctl.minDistance=2;T.ctl.maxDistance=160;T.ctl.enablePan=false;
   T.ctl.addEventListener("start",()=>{T.ctl.autoRotate=false});
   T.scene.add(new THREE.HemisphereLight(0xffffff,0x7a8670,0.85));
@@ -485,18 +530,34 @@ function init3d(){
   const fit=()=>{const w=el.clientWidth,h=el.clientHeight;if(!w||!h)return;T.r.setSize(w,h,false);T.cam.aspect=w/h;T.cam.updateProjectionMatrix()};
   fit();if(window.ResizeObserver)new ResizeObserver(fit).observe(el);else window.addEventListener("resize",fit);
   const still=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
-  (function loop(){requestAnimationFrame(loop);T.ctl.update();if(T.cam.position.y<1.2)T.cam.position.y=1.2;if(!still&&T.fans)T.fans.forEach(f=>f.rotation.y+=0.045);T.r.render(T.scene,T.cam)})();
+  (function loop(){requestAnimationFrame(loop);
+    if(T.ctl.autoRotate&&isFinite(T.ctl.maxAzimuthAngle)){const az=T.ctl.getAzimuthalAngle(),lim=T.ctl.maxAzimuthAngle-0.03;
+      if(az>lim)T.ctl.autoRotateSpeed=Math.abs(T.ctl.autoRotateSpeed);else if(az<-lim)T.ctl.autoRotateSpeed=-Math.abs(T.ctl.autoRotateSpeed)}
+    T.ctl.update();if(T.cam.position.y<1.2)T.cam.position.y=1.2;if(!still&&T.fans)T.fans.forEach(f=>f.rotation.y+=0.045);T.r.render(T.scene,T.cam)})();
 }
 function setView(v){
-  if(!T.ctl)return;T.view=v;
+  if(!T.ctl)return;T.wasUnder=T.view==="under";T.view=v;
   const d=T.dims||{W:20,P:12,hw:10,hf:9.5};
+  /* attached: only views from the yard side, never around the back of the house */
+  const lim=d.free?Infinity:0.85;T.ctl.minAzimuthAngle=-lim;T.ctl.maxAzimuthAngle=lim;
+  T.ctl.maxPolarAngle=v==="under"?Math.PI*0.88:Math.PI*0.72; /* tilt low enough to look up at the underside */
   if(v==="under"){
+    /* standing under the roof at eye height, looking up toward the house and the fan; spinning turned on */
     T.ctl.autoRotate=false;
-    T.cam.position.set(d.W*0.28,3.2,d.P*0.42);
-    T.ctl.target.set(-d.W*0.08,(d.hw+d.hf)/2-1.2,-d.P*0.12);
+    /* from the front corner of the slab with a wide lens, so the whole patio fits in the first view */
+    T.cam.fov=68;T.cam.updateProjectionMatrix();
+    const ox=d.W>=16?d.W/8:0; /* sit between posts so the middle post isn't dead center */
+    T.cam.position.set(ox,4.2,d.P*0.5+3);
+    T.ctl.target.set(ox,(d.hw+d.hf)/2-2.4,-d.P*0.3);
+    T.ctl.maxDistance=Math.max(d.W,d.P)*1.2;
+    if(T.act)T.act(true);
   }else{
-    const D=Math.max(d.W,d.P)*1.35+10;
-    T.cam.position.set(D*0.85,D*0.5,D*1.05);T.ctl.target.set(0,4.5,0);T.ctl.autoRotate=true;
+    T.cam.fov=40;T.cam.updateProjectionMatrix();
+    /* framed on the cover (in front of the house), not the whole house */
+    const D=Math.max(d.W,d.P)*1.15+8;
+    T.cam.position.set(D*0.45,D*0.42,d.P*0.15+D*0.95);T.ctl.target.set(0,4.2,d.P*0.15);T.ctl.autoRotate=true;
+    T.ctl.maxDistance=D*1.5;
+    if(T.act&&T.ctl.enabled&&T.view==="out"&&T.wasUnder)T.act(false);
   }
   T.ctl.update();
   document.querySelectorAll("#views .opt").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));
@@ -613,8 +674,8 @@ function build3d(c){
       T.fans.push(blades);
     }
   }
-  T.dims={W,P,hw,hf};
-  const key=W+"x"+P;if(T.key!==key){T.key=key;setView(T.view||"out")}
+  T.dims={W,P,hw,hf,free};
+  const key=W+"x"+P+(free?"f":"a");if(T.key!==key){T.key=key;setView(T.view||"out")}
 }
 let q3d=false;
 function schedule3d(c){if(q3d)return;q3d=true;requestAnimationFrame(()=>{q3d=false;build3d(c)})}
@@ -625,6 +686,7 @@ function scope(c){
     `${c.p}' × ${c.w}' ${roofName}, ${S.color}`,
     c.free?"Freestanding frame with front and rear beams":"Attached to the house fascia board with a flashed header",
     `${c.posts} aluminum posts anchored to the ${S.base==="new"?"new":"existing"} slab`,
+    `2x6 aluminum beam across the top of the posts`,
     ...(S.base==="new"?[`New 4" concrete slab, ${c.p}' × ${c.w}'`]:[]),
     "Fascia cover trim on both sloped sides",
     "Front gutter with "+(()=>{const d=dsList(c.w);return d.length+" downspout"+(d.length>1?"s":"")+" ("+d.map(i=>postName(i,Math.ceil(c.w/10)+1)).join(", ").toLowerCase()+") with splash blocks"})(),
@@ -684,16 +746,26 @@ function render(){
   drawPlan(c);
   schedule3d(c);
   const hs=$("hdrSell");hs.className="";
-  if(!S.sized){hs.textContent=money(0);$("hdrMeta").textContent="Pick a size"}
+  if(!S.sized){hs.textContent=money(0);$("hdrMeta").textContent=S.pk.p?"Pick a width":S.pk.w?"Pick out from house":"Pick a size"}
   else if(GATE&&!UNLOCK){hs.textContent="See price";hs.className="ask";$("hdrMeta").textContent=`${c.p}' × ${c.w}' · enter email above`}
   else if(PRIZE&&PRIZE.applied){hs.textContent=money(netSell(c));$("hdrMeta").innerHTML=`${c.p}' × ${c.w}' · <s>${money(c.sell)}</s> ${esc(PRIZE.t)}`}
-  else if(PRIZE){hs.textContent=money(c.sell);$("hdrMeta").textContent=`${c.p}' × ${c.w}' · ${PRIZE.t} won, finish quote`}
+  else if(PRIZE){hs.textContent=money(c.sell);$("hdrMeta").textContent=`${c.p}' × ${c.w}' · ${PRIZE.t} won`}
   else{hs.textContent=money(c.sell);$("hdrMeta").textContent=`${c.p}' × ${c.w}' · ${money(c.sell/c.sf)}/sf`}
+  /* customer app: lead with the monthly payment; total price shown smaller under it, with the loan terms (APR, months) right there */
+  $("hdrLbl").textContent="Your price";
+  if(GATE&&UNLOCK&&S.sized){
+    const t=tierOf(),net=netSell(c),m=pmt(net,t[2],S.term);
+    $("hdrLbl").textContent="Est. monthly";
+    hs.className="mo";hs.textContent=money(m);
+    const pz=PRIZE?(PRIZE.applied?` · <s>${money(c.sell)}</s>`:` · ${esc(PRIZE.t)} won`):"";
+    $("hdrMeta").innerHTML=`<b class="tot">${money(net)}</b> total${pz}`;
+    $("finBtn").textContent=`${S.term} mo · ${t[2].toFixed(2)}% APR est. · Details`;
+  }
   const pzOn=GATE&&UNLOCK&&S.sized;$("prizeBox").hidden=!pzOn;if(pzOn){pzOdds();pzShow(false)}else{$("pzHint").hidden=true}
   const roofName={wpan:"W-pan aluminum roof",flat:"Flat pan aluminum roof",insul:'3" insulated aluminum roof'}[S.roof];
   const sc=scope(c);
   $("incl").innerHTML=`<tr class="grp"><td>Included</td></tr>`+sc.inc.map(r=>`<tr><td><span class="mk yes">✓</span>${r}</td></tr>`).join("")
-    +`<tr class="grp"><td>Not included</td></tr>`+sc.exc.map(r=>`<tr><td><span class="mk no">✕</span>${r}</td></tr>`).join("");
+;  /* "Not included" list lives on the PDF quote / contract, not on the app screen */
     return c;
 }
 
@@ -760,7 +832,7 @@ function pzDraw(){
   for(let i=0;i<N*2;i++){const a=-Math.PI/2+i*SEG/2-SEG/2;cx.beginPath();cx.arc(Math.cos(a)*(Rr-14),Math.sin(a)*(Rr-14),5,0,2*Math.PI);cx.fillStyle="#f5d27a";cx.fill()}
   cx.restore();
 }
-function pzOdds(){const c=calc();$("pzOdds").innerHTML=PRIZES.map((p,i)=>`<tr><td><i style="background:${PZ_COLORS[i%PZ_COLORS.length]}"></i>${esc(p.t)}${p.pct&&S.sized?` <span class="fine">(${money(Math.round(c.sell*p.pct/100))} on this quote)</span>`:""}</td><td class="n">${p.odds}% chance</td></tr>`).join("")}
+function pzOdds(){if(!$("pzOdds"))return;const c=calc();$("pzOdds").innerHTML=PRIZES.map((p,i)=>`<tr><td><i style="background:${PZ_COLORS[i%PZ_COLORS.length]}"></i>${esc(p.t)}${p.pct&&S.sized?` <span class="fine">(${money(Math.round(c.sell*p.pct/100))} on this quote)</span>`:""}</td></tr>`).join("")}
 function pzLocalPick(){let r=Math.random()*100;for(let i=0;i<PRIZES.length;i++){r-=+PRIZES[i].odds||0;if(r<0)return i}return PRIZES.length-1}
 function pzSpinTo(i,done){
   const N=PRIZES.length,SEG=2*Math.PI/N,still=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -794,7 +866,6 @@ function pzShow(celebrate){
   if(celebrate)pzFireworks();
 }
 function pzFireworks(){
-  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;
   let fx=$("pzfx");if(!fx){fx=document.createElement("canvas");fx.id="pzfx";fx.setAttribute("aria-hidden","true");document.body.appendChild(fx)}
   const d=devicePixelRatio||1;fx.width=innerWidth*d;fx.height=innerHeight*d;const fc=fx.getContext("2d");let parts=[],n=0;
   const cols=["#d9a441","#1d5fa8","#2f7d4f","#9b3d33","#8a5a2b","#f5d27a","#6b4a8c"];
@@ -808,6 +879,29 @@ function pzFireworks(){
 $("pzSpin").onclick=pzSpin;
 (document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(pzDraw);
 if(PRIZE){pzRot=-(PRIZE.index||0)*2*Math.PI/PRIZES.length}
+/* ===== Your Gilco contact card (customer): shown once the quote is in. Details come from the back office (pc_contact). ===== */
+const CONTACT_DEF={rep_name:"Steve",rep_title:"Patio Cover Specialist",rep_cell:"",rep_email:"sbgilco@gmail.com",photo:"",br:"",ns:"",ss:""};
+let CONTACT={...CONTACT_DEF};
+const HEADSHOT=`<svg viewBox="0 0 120 120" aria-hidden="true"><rect width="120" height="120" fill="#cfd8df"/><circle cx="60" cy="47" r="22" fill="#e8c4a4"/><path d="M38 44c0-16 10-24 22-24s22 8 22 24c-4-8-12-11-22-11s-18 3-22 11z" fill="#5a4636"/><path d="M14 120c2-26 20-38 46-38s44 12 46 38z" fill="#8a5a2b"/><path d="M48 84l12 14 12-14" fill="none" stroke="#f3e9de" stroke-width="4" stroke-linejoin="round"/><rect x="52" y="68" width="16" height="16" rx="5" fill="#e8c4a4"/></svg>`;
+function setContact(v){if(v&&typeof v==="object"){CONTACT={...CONTACT_DEF,...v};drawContact()}}
+function contactCard(ct,sample){
+  const ph=/^data:image\/(jpeg|png|webp);base64,/.test(ct.photo||"")?`<img src="${ct.photo}" alt="${esc(ct.rep_name)}">`:HEADSHOT;
+  const tel=(v,smp)=>v?`<a href="tel:${esc(String(v).replace(/[^0-9+]/g,""))}">${esc(v)}</a>`:`<b class="smp">${smp}</b>`;
+  /* customers only see filled-in numbers; samples show in the back office preview */
+  const row=(lbl,v,smp,html)=>(v||sample)?`<div class="rep-row"><span>${lbl}</span>${html||tel(v,smp)}</div>`:"";
+  const offices=row("Baton Rouge",ct.br,"(225) 555-0100")+row("Northshore",ct.ns,"(985) 555-0100")+row("Southshore",ct.ss,"(504) 555-0100");
+  return `<div class="rep">
+    <div class="rep-top"><div class="rep-ph">${ph}</div>
+      <div><div class="rep-nm">${esc(ct.rep_name||"Your Gilco rep")}</div><div class="rep-tt">${esc(ct.rep_title||"")}</div><div class="rep-co">Gilco Home Services, LLC</div></div></div>
+    <p class="rep-next"><b>What happens next:</b> once your quote is approved, we'll text you to set up a quick site visit with ${esc((ct.rep_name||"your rep").split(" ")[0])}. ${esc((ct.rep_name||"Your rep").split(" ")[0])} will confirm the measurements and final price before anything is ordered.</p>
+    <div class="rep-rows">
+      <div class="rep-grp">Your contact</div>
+      ${row("Cell",ct.rep_cell,"(504) 555-0199")}
+      ${row("Email",ct.rep_email,"",ct.rep_email?`<a href="mailto:${esc(ct.rep_email)}">${esc(ct.rep_email)}</a>`:`<b class="smp">name@gilco.com</b>`)}
+      ${offices?`<div class="rep-grp">Gilco Home Services offices</div>${offices}`:""}
+    </div></div>`;
+}
+function drawContact(){const el=$("repCard");if(el&&!el.hidden)el.innerHTML=contactCard(CONTACT);const o=document.getElementById("ctPrev");if(o)o.innerHTML=contactCard(CONTACT,true)}
 $("book").addEventListener("submit",e=>{
   e.preventDefault();
   if(!S.sized){togglePicker(true);$("sizeBtn").scrollIntoView({behavior:"smooth",block:"center"});$("sizeChg").textContent="Pick a size first";return}
@@ -819,6 +913,7 @@ $("book").addEventListener("submit",e=>{
   const c=render();const sc=scope(c);
   const roof={wpan:"W-Pan",flat:"Flat Pan",insul:'3" Insulated'}[S.roof];
   $("quoteOut").hidden=false;$("pdfBtns").hidden=false;
+  if(GATE){$("repCard").hidden=false;drawContact()}
   $("quoteFlag").innerHTML=`<b>Your quote is ready: ${money(netSell(c))}</b>${PRIZE&&PRIZE.applied?` (includes your ${esc(PRIZE.t)} prize)`:""} for a ${c.p}' × ${c.w}' cover. Tap View PDF quote to see the full quote. The final price is confirmed at a quick site visit before anything is ordered.`;
   const calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
   requestAnimationFrame(()=>$("viewPdf").scrollIntoView({behavior:calm?"auto":"smooth",block:"center"}));
@@ -851,7 +946,7 @@ function buildSheet(){
   <div class="sh-lbl">Included</div><ul>${sc.inc.map(x=>`<li class="y"><i>✓</i>${esc(x)}</li>`).join("")}</ul>
   <div class="sh-lbl">Not included</div><ul>${sc.exc.map(x=>`<li class="n"><i>✕</i>${esc(x)}</li>`).join("")}</ul>
   ${pzOn2?`<div class="sh-two" style="margin-top:14px"><div>Patio cover, installed</div><div style="text-align:right">${money(c.sell)}</div><div>Online prize: ${esc(PRIZE.t)}</div><div style="text-align:right">−${money(pzOff2)}</div></div>`:""}
-  <div class="sh-price"><div><div style="font-size:10px;font-weight:700;letter-spacing:.1em">TOTAL INSTALLED PRICE</div><small>${c.sf} sq ft · ${money(net2/c.sf)} per sq ft · Price confirmed at site visit</small></div><b>${money(net2)}</b></div>
+  ${(()=>{const t=tierOf(),m=pmt(net2,t[2],S.term);return `<div class="sh-price"><div><div style="font-size:10px;font-weight:700;letter-spacing:.1em">ESTIMATED MONTHLY PAYMENT</div><small>Total installed price ${money(net2)} · ${S.term} months at ${t[2].toFixed(2)}% APR<br>Estimated, based on approved financing · Price confirmed at site visit</small></div><b>${money(m)}<span style="font-size:15px;font-weight:600">/mo</span></b></div>`})()}
   <div style="font-size:10.5px;color:#5d6872;margin-top:6px">${esc(finLine({...c,sell:net2}))}</div>
   <div class="sh-lbl">Terms</div>
   <ul><li>• 50% deposit at signing to order materials. Balance due on completion.</li>
@@ -881,10 +976,15 @@ $("viewPdf").onclick=()=>{$("sheetTitle").textContent="Quote preview";buildSheet
 $("closePdf").onclick=()=>{$("pdfView").hidden=true;$("viewPdf").focus()};
 $("pdfView").addEventListener("click",e=>{if(e.target===$("pdfView"))$("pdfView").hidden=true});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("pdfView").hidden)$("pdfView").hidden=true});
+/* Apply for financing: placeholder until a lender is connected (roadmap). Marks the quote so the office knows they want financing. */
+$("finApply").onclick=()=>{S.finWant=true;const m=$("finApplyMsg");m.hidden=false;
+  m.innerHTML="<b>Financing approval is coming soon.</b> Finish your quote below and we'll send you the application with your quote filled in.";
+  $("finApply").textContent="Financing requested ✓";
+  setTimeout(()=>$("cname").scrollIntoView({behavior:"smooth",block:"center"}),900)};
 $("finBtn").onclick=()=>{$("finPanel").scrollIntoView({behavior:"smooth",block:"start"})};
 
 render();
 </script>
 
-<script src="photos.js?v=9"></script>
+<script src="photos.js?v=11"></script>
 </body></html>
